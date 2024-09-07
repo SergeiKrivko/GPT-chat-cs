@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
-using Core;
+using Utils;
 
 namespace Auth;
 

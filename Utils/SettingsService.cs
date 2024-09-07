@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Xml;
 
-namespace Core;
+namespace Utils;
 
 public class SettingsService
 {
