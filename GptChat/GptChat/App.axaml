@@ -1,0 +1,33 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:GptChat"
+             x:Class="GptChat.App"
+             RequestedThemeVariant="Default">
+    <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator />
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <StreamGeometry x:Key="IconPlus">M11 11V2.00001C11 0.500028 13 0.540796 13 2.00001V11L22 11C23.5 11 23.5 13 22 13L13 13L13 22C13 23.5 11 23.5 11 22L11 13L1.99998 13C0.500017 13 0.499991 11 2 11H11Z</StreamGeometry>
+        <StreamGeometry x:Key="IconArchive">M3 0C0.5 0 0.5 2 0.5 2V3C0.5 3 0.5 4.42276 2 4.86827C2.27845 4.95097 2.60858 5 3 5H3.5H18.5H19C19.3914 5 19.7216 4.95097 20 4.86827C21.5 4.42276 21.5 3 21.5 3V2C21.5 2 21.5 -1.29806e-06 19 0H3ZM2.5 1.5C2 1.5 2 2 2 2V3C2 3 2 3.5 2.5 3.5H19.5C20 3.5 20 3 20 3V2C20 2 20 1.5 19.5 1.5H2.5Z M3 5C2.60858 5 2.27845 4.95097 2 4.86827V17C2 17 2 19.5 4.5 19.5H17.5C20 19.5 20 17 20 17V4.86827C19.7216 4.95097 19.3914 5 19 5H18.5V17C18.5 17 18.5 18 17.5 18H4.5C3.5 18 3.5 17 3.5 17V5H3Z M10.25 8V13.75L8.5 12C7.5 11 6.5 12 7.5 13L10.5 16C11 16.5 11 16.5 11.5 16L14.5 13C15.5 12 14.5 11 13.5 12L11.75 13.75V8C11.75 6.5 10.25 6.5 10.25 8Z</StreamGeometry>
+        <StreamGeometry x:Key="IconUser">M0.50003 19C0.50003 19 -0.499996 21.5 2.00003 21.5H18C20.5 21.5 19.5 19 19.5 19C19.5 19 18 12.5 10 12.5C2.00006 12.5 0.50003 19 0.50003 19ZM18.25 20H1.75C1.75 20 2.50001 14 10 14C17.5 14 18.25 20 18.25 20Z M5.1 5.5C5.1 4 6 0.5 10 0.5C14 0.5 14.9 4 14.9 5.5C14.9 7 14 11 10 11C6 11 5.1 7 5.1 5.5ZM10 2C6.49998 2 6.50003 5.5 6.50003 5.5C6.50003 5.5 6.99998 9.5 10 9.5C13 9.5 13.5 5.5 13.5 5.5C13.5 5.5 13.5 2 10 2Z</StreamGeometry>
+
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme/>
+        
+        <Style Selector="TextBox.ChatInput">
+            <Setter Property="Background" Value="Transparent"/>
+            <Style Selector="^:focus  /template/ Border">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+            </Style>
+            <Style Selector="^:pointerover  /template/ Border">
+                <Setter Property="Background" Value="Transparent"/>
+            </Style>
+        </Style>
+    </Application.Styles>
+</Application>

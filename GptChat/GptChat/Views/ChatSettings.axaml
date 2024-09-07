@@ -1,0 +1,23 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:GptChat.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="GptChat.Views.ChatSettings"
+             x:DataType="views:ChatSettings">
+    <StackPanel Margin="10" Spacing="6">
+        <TextBlock Text="Название:"/>
+        <TextBox Name="ChatNameBox"></TextBox>
+        <TextBlock Text="Модель:"/>
+        <ComboBox Name="ChatModelBox" HorizontalAlignment="Stretch">
+            <ComboBoxItem>gpt-3.5</ComboBoxItem>
+            <ComboBoxItem>gpt-4</ComboBoxItem>
+            <ComboBoxItem>gpt-4o</ComboBoxItem>
+        </ComboBox>
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <TextBlock Text="Синхронизировать" VerticalAlignment="Center"></TextBlock>
+            <ToggleSwitch Name="ChatSyncSwitch" OffContent="" OnContent=""></ToggleSwitch>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

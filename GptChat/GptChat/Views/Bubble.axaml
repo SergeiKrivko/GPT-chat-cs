@@ -1,0 +1,14 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="GptChat.Views.Bubble">
+    <Panel>
+        <Border Name="InnerBorder" Background="Gray" MaxWidth="500" CornerRadius="10 10 10 10">
+            <md:MarkdownScrollViewer Name="MarkdownViewer" Margin="10 7 10 7"/>
+            <!-- <TextBlock Name="TextBlock" Margin="10" TextWrapping="Wrap"></TextBlock> -->
+        </Border>
+    </Panel>
+</UserControl>

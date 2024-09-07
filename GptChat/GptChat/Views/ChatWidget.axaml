@@ -1,0 +1,63 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:GptChat.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="GptChat.Views.ChatWidget"
+             x:DataType="views:ChatWidget">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Border BorderThickness="0 0 0 1" BorderBrush="Gray" Height="50" HorizontalAlignment="Stretch">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Button Width="40" Height="40" Background="Transparent" Click="BackButton_OnClick">◀</Button>
+                    <TextBlock HorizontalAlignment="Stretch" VerticalAlignment="Center" Name="ChatNameTextBlock" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5">
+                    <ToggleButton Width="40" Height="40" Background="Transparent">S</ToggleButton>
+                    <ToggleButton Width="40" Height="40" Background="Transparent" Name="SettingsButton" 
+                                  IsCheckedChanged="SettingsButton_OnIsCheckedChanged">O</ToggleButton>
+                </StackPanel>
+            </Grid>
+        </Border>
+        <Panel Grid.Row="1">
+            <Border Name="MainView" Background="Brown">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                
+                    <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled"
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <StackPanel Name="BubblesStackPanel" Spacing="10" Margin="10"/>
+                    </ScrollViewer>
+                    <Border Grid.Row="1" CornerRadius="15" Background="Black" MinHeight="40" MaxHeight="300" Margin="5">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                        
+                            <TextBox TextWrapping="Wrap" AcceptsReturn="True" Margin="5"
+                                     BorderThickness="0" Watermark="Message..." Classes="ChatInput"/>
+                            <Button Grid.Column="1" Width="30" Height="30" Margin="0 5 5 5" Background="Transparent">▶</Button>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+            <views:ChatSettings Name="ChatSettingsView"></views:ChatSettings>
+        </Panel>
+    </Grid>
+</UserControl>
