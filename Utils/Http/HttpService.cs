@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Utils.Http.Exceptions;
 
@@ -7,6 +8,23 @@ namespace Utils.Http;
 public class HttpService
 {
     protected HttpClient Client = new HttpClient();
+
+    protected string? Token
+    {
+        set
+        {
+            if (value == null)
+                Client.DefaultRequestHeaders.Authorization = null;
+            else
+                Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", value);
+        }
+    }
+
+    protected string? BaseUrl
+    {
+        get => Client.BaseAddress?.ToString();
+        set => Client.BaseAddress = value == null ? null : new Uri(value);
+    }
 
     public delegate void UnauthorizedRequestHandler();
     public event UnauthorizedRequestHandler? Unauthorized;
@@ -21,15 +39,15 @@ public class HttpService
             throw new UnauthorizedException();
         }
         if (!resp.IsSuccessStatusCode)
-            throw new BadResponseCodeException();
+            throw new BadResponseCodeException($"Code {resp.StatusCode}");
     }
 
     private async Task<T> ProcessResponseBody<T>(HttpResponseMessage response)
     {
-        var body = await response.Content.ReadFromJsonAsync<ResponseBody<T>>();
+        var body = await response.Content.ReadFromJsonAsync<T>();
         if (body == null)
             throw new UnprocessableResponseException();
-        return body.data;
+        return body;
     }
 
     private async Task<T> ProcessResponse<T>(HttpResponseMessage response)
@@ -46,43 +64,92 @@ public class HttpService
 
     protected async Task<T> Post<T>(string url, BaseRequestBody? body)
     {
-        var response = await Client.PostAsync(url, body == null ? null : JsonContent.Create(body));
-        return await ProcessResponse<T>(response);
+        try
+        {
+            var response = await Client.PostAsync(url, body == null ? null : JsonContent.Create(body));
+            return await ProcessResponse<T>(response);
+        }
+        catch (HttpRequestException e)
+        {
+            throw new ConnectionException(e.Message);
+        }
     }
 
     protected async Task Post(string url, BaseRequestBody? body)
     {
-        var response = await Client.PostAsync(url, body == null ? null : JsonContent.Create(body));
-        await ProcessResponse(response);
+        try
+        {
+            var response = await Client.PostAsync(url, body == null ? null : JsonContent.Create(body));
+            await ProcessResponse(response);
+        }
+        catch (HttpRequestException e)
+        {
+            throw new ConnectionException(e.Message);
+        }
     }
 
     protected async Task<T> Get<T>(string url)
     {
-        var response = await Client.GetAsync(url);
-        return await ProcessResponse<T>(response);
+        try
+        {
+            var response = await Client.GetAsync(url);
+            return await ProcessResponse<T>(response);
+        }
+        catch (HttpRequestException e)
+        {
+            throw new ConnectionException(e.Message);
+        }
     }
 
     protected async Task<T> Put<T>(string url, BaseRequestBody? body)
     {
-        var response = await Client.PutAsync(url, body == null ? null : JsonContent.Create(body));
-        return await ProcessResponse<T>(response);
+        try
+        {
+            var response = await Client.PutAsync(url, body == null ? null : JsonContent.Create(body));
+            return await ProcessResponse<T>(response);
+        }
+        catch (HttpRequestException e)
+        {
+            throw new ConnectionException(e.Message);
+        }
     }
 
     protected async Task Put(string url, BaseRequestBody? body)
     {
-        var response = await Client.PutAsync(url, body == null ? null : JsonContent.Create(body));
-        await ProcessResponse(response);
+        try
+        {
+            var response = await Client.PutAsync(url, body == null ? null : JsonContent.Create(body));
+            await ProcessResponse(response);
+        }
+        catch (HttpRequestException e)
+        {
+            throw new ConnectionException(e.Message);
+        }
     }
 
     protected async Task<T> Delete<T>(string url)
     {
-        var response = await Client.DeleteAsync(url);
-        return await ProcessResponse<T>(response);
+        try
+        {
+            var response = await Client.DeleteAsync(url);
+            return await ProcessResponse<T>(response);
+        }
+        catch (HttpRequestException e)
+        {
+            throw new ConnectionException(e.Message);
+        }
     }
 
     protected async Task Delete(string url)
     {
-        var response = await Client.DeleteAsync(url);
-        await ProcessResponse(response);
+        try
+        {
+            var response = await Client.DeleteAsync(url);
+            await ProcessResponse(response);
+        }
+        catch (HttpRequestException e)
+        {
+            throw new ConnectionException(e.Message);
+        }
     }
 }

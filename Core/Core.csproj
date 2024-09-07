@@ -10,4 +10,9 @@
       <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Auth\Auth.csproj" />
+      <ProjectReference Include="..\Utils\Utils.csproj" />
+    </ItemGroup>
+
 </Project>

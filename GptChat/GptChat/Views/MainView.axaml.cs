@@ -2,6 +2,7 @@ using System;
 using Auth;
 using Avalonia.Controls;
 using Core;
+using Core.RemoteRepository;
 
 namespace GptChat.Views;
 
@@ -16,6 +17,12 @@ public partial class MainView : UserControl
         ChatsService.Instance.CurrentChanged += OnCurrentChatChanged;
         AuthService.Instance.UserChanged += OnUserChanged;
         OnUserChanged(AuthService.Instance.User);
+        GetChats();
+    }
+
+    private async void GetChats()
+    {
+        await ChatHttpService.Instance.GetAllChats();
     }
 
     private void OnCurrentChatChanged(Chat? chat)
