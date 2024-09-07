@@ -54,6 +54,9 @@ public class SettingsService
         catch (FileNotFoundException)
         {
         }
+        catch (XmlException)
+        {
+        }
     }
 
     private void StoreSettings()
