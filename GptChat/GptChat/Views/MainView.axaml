@@ -14,9 +14,12 @@
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <StackPanel Orientation="Horizontal">
-        <views:ChatsList Name="ChatsList" />
-        <Border Name="Border" Width="1" Background="Gray" />
-        <views:ChatsPanel Name="ChatsPanel" HorizontalAlignment="Stretch" />
-    </StackPanel>
+    <Panel>
+        <views:AuthScreen Name="AuthScreen"></views:AuthScreen>
+        <StackPanel Orientation="Horizontal" IsVisible="False" Name="MainScreen">
+            <views:ChatsList Name="ChatsList" />
+            <Border Name="Border" Width="1" Background="Gray" />
+            <views:ChatsPanel Name="ChatsPanel" HorizontalAlignment="Stretch" />
+        </StackPanel>
+    </Panel>
 </UserControl>

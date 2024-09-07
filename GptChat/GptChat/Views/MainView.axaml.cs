@@ -1,4 +1,5 @@
 using System;
+using Auth;
 using Avalonia.Controls;
 using Core;
 
@@ -13,6 +14,8 @@ public partial class MainView : UserControl
     {
         InitializeComponent();
         ChatsService.Instance.CurrentChanged += OnCurrentChatChanged;
+        AuthService.Instance.UserChanged += OnUserChanged;
+        OnUserChanged(AuthService.Instance.User);
     }
 
     private void OnCurrentChatChanged(Chat? chat)
@@ -45,5 +48,11 @@ public partial class MainView : UserControl
             ChatsList.Width = int.Max(200, int.Min(300, (int)(width / 3)));
             ChatsPanel.Width = width - 1 - ChatsList.Width;
         }
+    }
+
+    private void OnUserChanged(User? user)
+    {
+        MainScreen.IsVisible = user != null;
+        AuthScreen.IsVisible = user == null;
     }
 }
