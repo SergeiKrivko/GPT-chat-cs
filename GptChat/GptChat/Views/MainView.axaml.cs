@@ -17,12 +17,6 @@ public partial class MainView : UserControl
         ChatsService.Instance.CurrentChanged += OnCurrentChatChanged;
         AuthService.Instance.UserChanged += OnUserChanged;
         OnUserChanged(AuthService.Instance.User);
-        GetChats();
-    }
-
-    private async void GetChats()
-    {
-        await ChatHttpService.Instance.GetAllChats();
     }
 
     private void OnCurrentChatChanged(Chat? chat)

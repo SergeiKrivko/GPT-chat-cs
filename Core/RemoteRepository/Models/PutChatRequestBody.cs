@@ -2,7 +2,7 @@
 
 namespace Core.RemoteRepository.Models;
 
-public class PutChatRequestBody: BaseRequestBody
+public class PutChatRequestBody
 {
     public string name { get; set; }
     public string model { get; set; }

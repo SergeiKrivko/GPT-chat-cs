@@ -27,7 +27,7 @@ public class HttpService
     }
 
     public delegate void UnauthorizedRequestHandler();
-    public event UnauthorizedRequestHandler? Unauthorized;
+    public static event UnauthorizedRequestHandler? Unauthorized;
 
     private void ProcessStatusCode(HttpResponseMessage resp)
     {
@@ -62,7 +62,7 @@ public class HttpService
         await ProcessResponseBody<int?>(response);
     }
 
-    protected async Task<T> Post<T>(string url, BaseRequestBody? body)
+    protected async Task<T> Post<T>(string url, object? body)
     {
         try
         {
@@ -75,7 +75,7 @@ public class HttpService
         }
     }
 
-    protected async Task Post(string url, BaseRequestBody? body)
+    protected async Task Post(string url, object? body)
     {
         try
         {
@@ -101,7 +101,7 @@ public class HttpService
         }
     }
 
-    protected async Task<T> Put<T>(string url, BaseRequestBody? body)
+    protected async Task<T> Put<T>(string url, object? body)
     {
         try
         {
@@ -114,7 +114,7 @@ public class HttpService
         }
     }
 
-    protected async Task Put(string url, BaseRequestBody? body)
+    protected async Task Put(string url, object? body)
     {
         try
         {
