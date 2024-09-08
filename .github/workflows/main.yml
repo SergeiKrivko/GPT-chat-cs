@@ -120,6 +120,7 @@ jobs:
       - name: Build
         run: |
           cd GptChat/GptChat.Android
+          dotnet workload restore
           dotnet build -c Release
 
       - name: Upload artifacts
