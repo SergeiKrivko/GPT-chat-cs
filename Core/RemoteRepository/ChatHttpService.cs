@@ -27,7 +27,7 @@ public class ChatHttpService: BodyDetailHttpService
     public event ChatHeader? ChatUpdated;
 
     public delegate void DeleteChatHeader(Guid chatId);
-    public event DeleteChatHeader? DeleteChat;
+    public event DeleteChatHeader? ChatDeleted;
 
     private ChatHttpService()
     {
@@ -36,7 +36,7 @@ public class ChatHttpService: BodyDetailHttpService
         AuthService.Instance.UserChanged += OnUserChanged;
         OnUserChanged(AuthService.Instance.User);
 
-        _socketService = new ChatSocketService();
+        _socketService = ChatSocketService.Instance;
         _socketService.Subscribe<List<ChatReadModel>>("new_chats", chats =>
         {
             foreach (var chat in chats)
@@ -102,29 +102,22 @@ public class ChatHttpService: BodyDetailHttpService
 
         foreach (var chat in await GetAllChatsDeletedAfter(timeStamp))
         {
-            DeleteChat?.Invoke(chat.uuid);
+            ChatDeleted?.Invoke(chat.uuid);
         }
     }
 
-    public async Task Connect()
+    public async Task Connect(DateTime timeStamp)
     {
         var user = AuthService.Instance.User;
         while (true)
         {
             if (user == null)
                 break;
-            if (!AuthService.Instance.Refreshed)
-            {
-                await Task.Delay(100);
-                continue;
-            }
-            var timeStamp = SettingsService.Instance.Get<DateTime>($"{user.Id}-timestamp");
-            Token = user?.IdToken;
+            Token = user.IdToken;
             try
             {
                 await LoadChats(timeStamp);
                 SettingsService.Instance.Set($"{user?.Id}-timestamp", DateTime.Now);
-                await _socketService.Connect();
                 break;
             }
             catch (ConnectionException)

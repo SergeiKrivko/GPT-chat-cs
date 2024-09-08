@@ -44,23 +44,26 @@ public partial class ChatWidget : UserControl
 
     private void ChatsOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.NewItems != null)
+        Dispatcher.UIThread.Post(() =>
         {
-            foreach (var item in e.NewItems)
+            if (e.NewItems != null)
             {
-                var widget = new Bubble((Message)item);
-                _bubbles[widget.Message.Id] = widget;
-                BubblesStackPanel.Children.Add(widget);
+                foreach (var item in e.NewItems)
+                {
+                    var widget = new Bubble((Message)item);
+                    _bubbles[widget.Message.Id] = widget;
+                    BubblesStackPanel.Children.Add(widget);
+                }
             }
-        }
 
-        if (e.OldItems != null)
-        {
-            foreach (var item in e.OldItems)
+            if (e.OldItems != null)
             {
-                BubblesStackPanel.Children.Remove(_bubbles[((Message)item).Id]);
+                foreach (var item in e.OldItems)
+                {
+                    BubblesStackPanel.Children.Remove(_bubbles[((Message)item).Id]);
+                }
             }
-        }
+        });
     }
 
     private void BackButton_OnClick(object? sender, RoutedEventArgs e)

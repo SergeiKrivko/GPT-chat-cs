@@ -2,6 +2,7 @@
 using Auth;
 using Core.RemoteRepository;
 using Core.RemoteRepository.Models;
+using Utils;
 
 namespace Core;
 
@@ -15,6 +16,7 @@ public class ChatsService
         ChatHttpService.Instance.ChatAdded += OnChatAdded;
         ChatHttpService.Instance.ChatUpdated += OnChatUpdated;
         AuthService.Instance.UserChanged += OnUserChanged;
+        MessageHttpService.Instance.MessageAdded += OnMessageAdded;
         OnUserChanged(AuthService.Instance.User);
     }
 
@@ -22,7 +24,14 @@ public class ChatsService
     {
         await _localRepository.Init();
         await _loadLocalChats();
-        await ChatHttpService.Instance.Connect();
+        while (!AuthService.Instance.Refreshed)
+        {
+            await Task.Delay(100);
+        }
+        var timeStamp = SettingsService.Instance.Get<DateTime>($"{user.Id}-timestamp");
+        await ChatSocketService.Instance.Connect();
+        await ChatHttpService.Instance.Connect(timeStamp);
+        await MessageHttpService.Instance.Connect(timeStamp);
     }
 
     public static ChatsService Instance
@@ -71,7 +80,6 @@ public class ChatsService
 
     public async Task CreateChat()
     {
-        Console.WriteLine("Creating chat");
         await ChatHttpService.Instance.CreateChat();
     }
 
@@ -109,6 +117,18 @@ public class ChatsService
         {
             Chats.Add(chat);
         }
+    }
+    
+    public async Task CreateMessage()
+    {
+        await ChatHttpService.Instance.CreateChat();
+    }
+
+    private async void OnMessageAdded(Message message)
+    {
+        await _localRepository.InsertMessage(message);
+        var chat = GetChat(message.ChatId);
+        chat.Messages.Add(message);
     }
 
     public async Task LoadMessages(Guid chatId, int count)

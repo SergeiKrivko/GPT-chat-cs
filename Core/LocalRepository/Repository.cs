@@ -47,7 +47,7 @@ public class Repository<T> where T: new()
 
     public async Task Insert(T item)
     {
-        await _database.InsertAsync(item);
+        await _database.InsertOrReplaceAsync(item);
     }
     
     public async Task Save(T item)

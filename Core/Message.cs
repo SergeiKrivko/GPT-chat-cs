@@ -1,4 +1,5 @@
 ﻿using Core.LocalRepository.Models;
+using Core.RemoteRepository.Models;
 using SQLite;
 
 namespace Core;
@@ -41,6 +42,21 @@ public class Message
             Content = model.Content,
             Model = model.Model,
             Temperature = model.Temperature,
+        };
+    }
+    
+    public static Message FromReadModel(MessageReadModel model)
+    {
+        return new Message
+        {
+            Id = model.uuid,
+            ChatId = model.chat_uuid,
+            CreatedAt = model.created_at,
+            DeletedAt = model.deleted_at,
+            Role = model.role,
+            Content = model.content,
+            Model = model.model,
+            Temperature = model.temperature,
         };
     }
 }
