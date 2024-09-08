@@ -1,15 +1,26 @@
 ﻿using System.Collections.ObjectModel;
+using Auth;
+using Core.RemoteRepository;
 
 namespace Core;
 
 public class ChatsService
 {
     private static ChatsService? _instance;
-    private LocalRepository _localRepository = LocalRepository.Instance;
+    private LocalRepository.LocalRepository _localRepository = LocalRepository.LocalRepository.Instance;
 
     private ChatsService()
     {
-        _loadChats();
+        ChatHttpService.Instance.NewChat += NewChat;
+        AuthService.Instance.UserChanged += OnUserChanged;
+        OnUserChanged(AuthService.Instance.User);
+    }
+
+    private async void OnUserChanged(User? user)
+    {
+        await _localRepository.Init();
+        await _loadLocalChats();
+        await ChatHttpService.Instance.LoadChats();
     }
 
     public static ChatsService Instance
@@ -65,6 +76,12 @@ public class ChatsService
         return chat;
     }
 
+    public async void NewChat(Chat chat)
+    {
+        await _localRepository.InsertChat(chat);
+        Chats.Add(chat);
+    }
+
     public async void SaveChat(Chat chat)
     {
         await _localRepository.SaveChat(chat);
@@ -75,7 +92,7 @@ public class ChatsService
         await _localRepository.SaveChat(GetChat(chatId));
     }
 
-    private async void _loadChats()
+    private async Task _loadLocalChats()
     {
         foreach (var chat in await _localRepository.GetAllChats())
         {
@@ -86,7 +103,7 @@ public class ChatsService
     public async Task LoadMessages(Guid chatId, int count)
     {
         var chat = GetChat(chatId);
-        var messages = await _localRepository.GetAllMessages(chatId, maxIndex: chat.LastLoadedMessage - 1);
+        var messages = await _localRepository.GetAllMessages(chatId);
         if (messages.Count > count)
             messages = messages.Slice(messages.Count - count, count);
         foreach (var message in messages)

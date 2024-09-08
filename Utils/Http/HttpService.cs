@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Newtonsoft.Json;
 using Utils.Http.Exceptions;
 
 namespace Utils.Http;
@@ -42,21 +43,23 @@ public class HttpService
             throw new BadResponseCodeException($"Code {resp.StatusCode}");
     }
 
-    private async Task<T> ProcessResponseBody<T>(HttpResponseMessage response)
+    protected virtual async Task<T> ProcessResponseBody<T>(HttpResponseMessage response)
     {
-        var body = await response.Content.ReadFromJsonAsync<T>();
+        var jsonString = await response.Content.ReadAsStringAsync();
+        var body = JsonConvert.DeserializeObject<T>(jsonString);
+        // var body = await response.Content.ReadFromJsonAsync<T>();
         if (body == null)
             throw new UnprocessableResponseException();
         return body;
     }
 
-    private async Task<T> ProcessResponse<T>(HttpResponseMessage response)
+    protected virtual async Task<T> ProcessResponse<T>(HttpResponseMessage response)
     {
         ProcessStatusCode(response);
         return await ProcessResponseBody<T>(response);
     }
 
-    private async Task ProcessResponse(HttpResponseMessage response)
+    protected virtual async Task ProcessResponse(HttpResponseMessage response)
     {
         ProcessStatusCode(response);
         await ProcessResponseBody<int?>(response);

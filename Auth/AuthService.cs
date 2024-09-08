@@ -14,6 +14,8 @@ public class AuthService : HttpService
     private HttpClient _client = new HttpClient();
     private User? _user;
 
+    public bool Refreshed { get; private set; } = false;
+
     public User? User
     {
         get => _user;
@@ -88,7 +90,7 @@ public class AuthService : HttpService
             }
             if (User.ExpiresAt != null)
             {
-                await Task.Delay((int)(User.ExpiresAt - DateTime.Now).Value.TotalMilliseconds - 10);
+                await Task.Delay(int.Max(0, (int)(User.ExpiresAt - DateTime.Now).Value.TotalMilliseconds - 10));
             }
             try
             {
@@ -110,6 +112,7 @@ public class AuthService : HttpService
 
     private async Task RefreshToken()
     {
+        Refreshed = false;
         if (User == null)
             return;
         var resp = await Post<RefreshResponseBody>(
@@ -124,6 +127,7 @@ public class AuthService : HttpService
         User.ExpiresAt = DateTime.Now + TimeSpan.FromSeconds(resp.expires_in);
         User = User;
         Console.WriteLine("Token refreshed success");
+        Refreshed = true;
     }
 }
 

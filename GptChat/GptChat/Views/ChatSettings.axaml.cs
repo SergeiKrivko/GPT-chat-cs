@@ -20,7 +20,6 @@ public partial class ChatSettings : UserControl
             return;
         ChatNameBox.Text = Chat.Name;
         ChatModelBox.SelectedItem = Chat.Model;
-        ChatSyncSwitch.IsChecked = Chat.Sync;
     }
 
     public void Save()
@@ -30,12 +29,10 @@ public partial class ChatSettings : UserControl
         var flag = false;
         flag |= Chat.Name != ChatNameBox.Text;
         // flag |= Chat.Model != (string?)ChatModelBox.SelectedValue;
-        flag |= Chat.Sync != ChatSyncSwitch.IsChecked;
         if (flag)
         {
             Chat.Name = ChatNameBox.Text ?? "";
             // Chat.Model = (string?)ChatModelBox.SelectedValue;
-            Chat.Sync = ChatSyncSwitch.IsChecked ?? false;
             ChatsService.Instance.SaveChat(Chat);
         }
     }

@@ -15,9 +15,5 @@
             <ComboBoxItem>gpt-4</ComboBoxItem>
             <ComboBoxItem>gpt-4o</ComboBoxItem>
         </ComboBox>
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <TextBlock Text="Синхронизировать" VerticalAlignment="Center"></TextBlock>
-            <ToggleSwitch Name="ChatSyncSwitch" OffContent="" OnContent=""></ToggleSwitch>
-        </StackPanel>
     </StackPanel>
 </UserControl>
