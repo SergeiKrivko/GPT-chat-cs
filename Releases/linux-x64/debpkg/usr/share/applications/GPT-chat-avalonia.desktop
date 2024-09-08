@@ -1,0 +1,9 @@
+﻿[Desktop Entry]
+Version=1.0.0
+Name=GPT-chat-avalonia
+Exec=/opt/SergeiKrivko/GPT-chat-avalonia/GptChat.Desktop
+StartupNotify=true
+Terminal=false
+Icon=/opt/SergeiKrivko/GPT-chat-avalonia/icon.png
+Type=Application
+Categories=Network;

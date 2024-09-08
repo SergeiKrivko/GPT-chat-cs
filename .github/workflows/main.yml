@@ -2,7 +2,7 @@
 on: [push, pull_request]
 
 jobs:
-  build-windows:
+  build-win-x64:
     name: Build for Windows
     runs-on: windows-latest
 
@@ -30,4 +30,42 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: GPT-chat-win-x64.exe
-          path: Releases/win-x64/GPT-chat-setup
+          path: Releases/win-x64/GPT-chat-setup  
+  
+  build-linux-x64:
+    name: Build for Linux
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup .Net
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0
+
+      - name: Build
+        run: |
+          cd GptChat/GptChat.Desktop
+          dotnet build --sc --runtime linux-x64 -c Release
+
+      - name: Prepare DEP package
+        run: |
+          cp -r GptChat/GptChat.Desktop/bin/Debug/net8.0/win-x64 Releases/linux-x64/debpkg/opt/SergeiKrivko/GPT-chat-avalonia
+
+      - name: Create DEB package
+        uses: jiro4989/build-deb-action@v3
+        with:
+          package: gptchat-avalonia
+          package_root: Releases/linux-x64/debpkg
+          maintainer: SergeiKrivko
+          version: 1.0.0
+          arch: 'amd64'
+          desc: 'GPT-chat-avalonia'
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: GPT-chat-linux-x64.exe
+          path: Releases/wlinux-x64/gptchat-avalonia_1.0.0_amd64.deb
