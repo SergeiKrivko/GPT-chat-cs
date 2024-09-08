@@ -8,6 +8,8 @@
 
     <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="SocketIOClient" Version="3.1.2" />
+      <PackageReference Include="SocketIOClient.Newtonsoft.Json" Version="3.0.7" />
     </ItemGroup>
 
 </Project>

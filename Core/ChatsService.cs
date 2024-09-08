@@ -14,13 +14,14 @@ public class ChatsService
         ChatHttpService.Instance.NewChat += NewChat;
         AuthService.Instance.UserChanged += OnUserChanged;
         OnUserChanged(AuthService.Instance.User);
+        
     }
 
     private async void OnUserChanged(User? user)
     {
         await _localRepository.Init();
         await _loadLocalChats();
-        await ChatHttpService.Instance.LoadChats();
+        await ChatHttpService.Instance.Connect();
     }
 
     public static ChatsService Instance
@@ -67,13 +68,11 @@ public class ChatsService
         throw new KeyNotFoundException($"Chat {chatId} not found");
     }
 
-    public async Task<Chat> CreateChat()
+    public async Task CreateChat()
     {
         var chat = new Chat();
         chat.Id = Guid.NewGuid();
-        await _localRepository.InsertChat(chat);
-        Chats.Add(chat);
-        return chat;
+        NewChat(chat);
     }
 
     public async void NewChat(Chat chat)

@@ -19,6 +19,8 @@ public class ChatHttpService: BodyDetailHttpService
             return _instance;
         }
     }
+    
+    private ChatSocketService _socketService;
 
     public delegate void NewChatHeader(Chat chat);
     public event NewChatHeader? NewChat;
@@ -32,6 +34,9 @@ public class ChatHttpService: BodyDetailHttpService
         Token = AuthService.Instance.User?.IdToken;
         AuthService.Instance.UserChanged += OnUserChanged;
         OnUserChanged(AuthService.Instance.User);
+
+        _socketService = new ChatSocketService();
+        
     }
 
     public async Task<List<GetChatResponseBody>> GetAllChats()
@@ -75,46 +80,64 @@ public class ChatHttpService: BodyDetailHttpService
         Token = user?.IdToken;
     }
 
-    public async Task LoadChats()
+    private async Task LoadChats(DateTime timeStamp)
+    {
+        foreach (var chat in await GetAllChatsCreatedAfter(timeStamp))
+        {
+            NewChat?.Invoke(new Chat
+            {
+                Id = chat.uuid,
+                CreatedAt = chat.created_at,
+                DeletedAt = chat.deleted_at,
+                Name = chat.name,
+                Model = chat.model,
+                ContextSize = chat.context_size ?? 0,
+                Temperature = chat.temperature ?? 0.5,
+            });
+        }
+
+        foreach (var chat in await GetAllChatsDeletedAfter(timeStamp))
+        {
+            DeleteChat?.Invoke(chat.uuid);
+        }
+    }
+
+    public async Task Connect()
     {
         var user = AuthService.Instance.User;
-        if (user == null)
-            return;
-        var timeStamp1 = SettingsService.Instance.Get<DateTime>($"{user.Id}-timestamp");
-        var timeStamp2 = timeStamp1;
         while (true)
         {
-            Console.WriteLine(AuthService.Instance.Refreshed);
+            if (user == null)
+                break;
             if (!AuthService.Instance.Refreshed)
             {
                 await Task.Delay(100);
                 continue;
             }
+            var timeStamp = SettingsService.Instance.Get<DateTime>($"{user.Id}-timestamp");
             Token = user?.IdToken;
             try
             {
-                foreach (var chat in await GetAllChatsCreatedAfter(timeStamp1))
-                {
-                    NewChat?.Invoke(new Chat
-                    {
-                        Id = chat.uuid,
-                        CreatedAt = chat.created_at,
-                        DeletedAt = chat.deleted_at,
-                        Name = chat.name,
-                        Model = chat.model,
-                        ContextSize = chat.context_size ?? 0,
-                        Temperature = chat.temperature ?? 0.5,
-                    });
-                }
-
-                timeStamp1 = DateTime.Now;
-
-                foreach (var chat in await GetAllChatsDeletedAfter(timeStamp2))
-                {
-                    DeleteChat?.Invoke(chat.uuid);
-                }
-
+                await LoadChats(timeStamp);
                 SettingsService.Instance.Set($"{user?.Id}-timestamp", DateTime.Now);
+                await _socketService.Connect();
+                _socketService.Subscribe<List<GetChatResponseBody>>("new_chats", chats =>
+                {
+                    Console.WriteLine($"Socket: {chats.Count}");
+                    foreach (var chat in chats)
+                    {
+                        NewChat?.Invoke(new Chat
+                        {
+                            Id = chat.uuid,
+                            CreatedAt = chat.created_at,
+                            DeletedAt = chat.deleted_at,
+                            Name = chat.name,
+                            Model = chat.model,
+                            ContextSize = chat.context_size ?? 0,
+                            Temperature = chat.temperature ?? 0.5,
+                        });
+                    }
+                });
                 break;
             }
             catch (ConnectionException)

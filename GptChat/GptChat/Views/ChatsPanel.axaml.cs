@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using Core;
 
 namespace GptChat.Views;
@@ -34,23 +35,26 @@ public partial class ChatsPanel : UserControl
 
     private void ChatsOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.NewItems != null)
+        Dispatcher.UIThread.Post(() =>
         {
-            foreach (var item in e.NewItems)
+            if (e.NewItems != null)
             {
-                var widget = new ChatWidget((Chat)item);
-                widget.IsVisible = false;
-                _widgets[widget.Chat.Id] = widget;
-                Panel.Children.Add(widget);
+                foreach (var item in e.NewItems)
+                {
+                    var widget = new ChatWidget((Chat)item);
+                    widget.IsVisible = false;
+                    _widgets[widget.Chat.Id] = widget;
+                    Panel.Children.Add(widget);
+                }
             }
-        }
 
-        if (e.OldItems != null)
-        {
-            foreach (var item in e.OldItems)
+            if (e.OldItems != null)
             {
-                Panel.Children.Remove(_widgets[((Chat)item).Id]);
+                foreach (var item in e.OldItems)
+                {
+                    Panel.Children.Remove(_widgets[((Chat)item).Id]);
+                }
             }
-        }
+        });
     }
 }
