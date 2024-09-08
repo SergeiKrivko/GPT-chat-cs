@@ -67,11 +67,11 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: GPT-chat-linux-x64.exe
-          path: Releases/wlinux-x64/gptchat-avalonia_1.0.0_amd64.deb
+          name: GPT-chat-linux-x64.deb
+          path: gptchat-avalonia_1.0.0_amd64.deb
           
   build-macos-x64:
-    name: Build for Linux
+    name: Build for macOS
     runs-on: macos-12
 
     steps:
@@ -101,5 +101,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: GPT-chat-linux-x64.exe
-          path: Releases/wlinux-x64/gptchat-avalonia_1.0.0_amd64.deb
+          name: GPT-chat-mac-x64.dmg
+          path: GPT-chat-avalonia.dmg
