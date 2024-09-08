@@ -118,7 +118,7 @@ jobs:
           dotnet-version: 8.0
 
       - name: Setup Android SDK
-        uses: actions/setup-android@v4
+        uses: android-actions/setup-android@v3
 
       - name: Build
         run: |
