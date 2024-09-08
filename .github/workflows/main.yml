@@ -52,7 +52,7 @@ jobs:
 
       - name: Prepare DEP package
         run: |
-          cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/linux-x64 Releases/linux-x64/debpkg/opt/SergeiKrivko/GPT-chat-avalonia
+          cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/linux-x64/. Releases/linux-x64/debpkg/opt/SergeiKrivko/GPT-chat-avalonia
 
       - name: Create DEB package
         uses: jiro4989/build-deb-action@v3
@@ -90,7 +90,7 @@ jobs:
 
       - name: Prepare package
         run: |
-          cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/osx-x64 Releases/mac-x64/MacOS
+          cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/osx-x64/. Releases/mac-x64/MacOS
 
       - name: Create installer
         uses: QQxiaoming/create-dmg-action@v0.0.2
@@ -116,6 +116,9 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0
+
+      - name: Setup Android SDK
+        uses: actions/setup-android@v4
 
       - name: Build
         run: |
