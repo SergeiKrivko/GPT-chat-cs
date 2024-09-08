@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: GPT-chat-win-x64.exe
-          path: Releases/win-x64/GPT-chat-setup  
+          path: Releases/win-x64/GPT-chat-setup.exe 
   
   build-linux-x64:
     name: Build for Linux
@@ -58,7 +58,7 @@ jobs:
 
       - name: Prepare DEP package
         run: |
-          cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/win-x64 Releases/linux-x64/debpkg/opt/SergeiKrivko/GPT-chat-avalonia
+          cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/linux-x64 Releases/linux-x64/debpkg/opt/SergeiKrivko/GPT-chat-avalonia
 
       - name: Create DEB package
         uses: jiro4989/build-deb-action@v3
