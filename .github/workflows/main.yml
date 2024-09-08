@@ -27,7 +27,7 @@ jobs:
           options: /O+
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: GPT-chat-win-x64.exe
           path: Releases/win-x64/GPT-chat-setup.exe 
@@ -65,7 +65,7 @@ jobs:
           desc: 'GPT-chat-avalonia'
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: GPT-chat-linux-x64.deb
           path: gptchat-avalonia_1.0.0_amd64.deb
@@ -86,11 +86,11 @@ jobs:
       - name: Build
         run: |
           cd GptChat/GptChat.Desktop
-          dotnet build --sc --runtime mac-x64 -c Release
+          dotnet build --sc --runtime osx-x64 -c Release
 
       - name: Prepare package
         run: |
-          cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/mac-x64 Releases/mac-x64/MacOS
+          cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/osx-x64 Releases/mac-x64/MacOS
 
       - name: Create installer
         uses: QQxiaoming/create-dmg-action@v0.0.2
@@ -99,7 +99,31 @@ jobs:
           srcdir: Releases/mac-x64/GPT-chat-avalonia.app
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: GPT-chat-mac-x64.dmg
           path: GPT-chat-avalonia.dmg
+  
+  build-android:
+    name: Build for Android
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .Net
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0
+
+      - name: Build
+        run: |
+          cd GptChat/GptChat.Android
+          dotnet build -c Release
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: GptChat/GptChat.Android/bin/Release/net8.0-android/com.CompanyName.GptChat-Signed.apk
+          path: GPT-chat-avalonia.apk
