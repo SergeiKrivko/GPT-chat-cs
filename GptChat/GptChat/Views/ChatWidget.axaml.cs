@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using Core;
 
 namespace GptChat.Views;
@@ -21,9 +22,19 @@ public partial class ChatWidget : UserControl
         ChatSettingsView.IsVisible = false;
         ChatSettingsView.Chat = Chat;
         ChatSettingsView.Update();
-        ChatNameTextBlock.Text = Chat.Name;
         Chat.Messages.CollectionChanged += ChatsOnCollectionChanged;
         LoadMessages();
+        ApplyChanges();
+        Chat.Updated += ApplyChanges;
+    }
+
+    private void ApplyChanges()
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            ChatNameTextBlock.Text = Chat.Name;
+        });
+        
     }
 
     private async void LoadMessages()

@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using Auth;
 using Core.RemoteRepository;
+using Core.RemoteRepository.Models;
 
 namespace Core;
 
@@ -11,10 +12,10 @@ public class ChatsService
 
     private ChatsService()
     {
-        ChatHttpService.Instance.NewChat += NewChat;
+        ChatHttpService.Instance.ChatAdded += OnChatAdded;
+        ChatHttpService.Instance.ChatUpdated += OnChatUpdated;
         AuthService.Instance.UserChanged += OnUserChanged;
         OnUserChanged(AuthService.Instance.User);
-        
     }
 
     private async void OnUserChanged(User? user)
@@ -70,25 +71,36 @@ public class ChatsService
 
     public async Task CreateChat()
     {
-        var chat = new Chat();
-        chat.Id = Guid.NewGuid();
-        NewChat(chat);
+        Console.WriteLine("Creating chat");
+        await ChatHttpService.Instance.CreateChat();
     }
 
-    public async void NewChat(Chat chat)
+    private async void OnChatAdded(Chat chat)
     {
         await _localRepository.InsertChat(chat);
         Chats.Add(chat);
     }
 
-    public async void SaveChat(Chat chat)
+    private async void OnChatUpdated(Chat chat)
     {
         await _localRepository.SaveChat(chat);
+        GetChat(chat.Id).Update(chat);
     }
 
-    public async void SaveChat(Guid chatId)
+    public async void SaveChat(Chat chat)
     {
-        await _localRepository.SaveChat(GetChat(chatId));
+        await ChatHttpService.Instance.UpdateChat(chat.Id, new ChatUpdateModel
+        {
+            name = chat.Name,
+            model = chat.Model,
+            context_size = chat.ContextSize,
+            temperature = chat.Temperature,
+        });
+    }
+
+    public void SaveChat(Guid chatId)
+    {
+        SaveChat(GetChat(chatId));
     }
 
     private async Task _loadLocalChats()

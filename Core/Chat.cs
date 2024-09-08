@@ -1,12 +1,13 @@
 ﻿using System.Collections.ObjectModel;
 using Core.LocalRepository.Models;
+using Core.RemoteRepository.Models;
 using SQLite;
 
 namespace Core;
 
 public class Chat
 {
-    [PrimaryKey] public Guid Id { get; set; }
+    public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
     public string Name { get; set; }
@@ -14,8 +15,8 @@ public class Chat
     public int ContextSize { get; set; }
     public double Temperature { get; set; }
     
-    [Ignore] public ObservableCollection<Message> Messages { get; } = new();
-    [Ignore] public int? LastLoadedMessage { get; set; } = null;
+    public ObservableCollection<Message> Messages { get; } = new();
+    public int? LastLoadedMessage { get; set; } = null;
 
     public ChatLocalModel ToLocalModel()
     {
@@ -43,5 +44,35 @@ public class Chat
             ContextSize = model.ContextSize,
             Temperature = model.Temperature,
         };
+    }
+    
+    public static Chat FromReadModel(ChatReadModel model)
+    {
+        return new Chat
+        {
+            Id = model.uuid,
+            CreatedAt = model.created_at,
+            DeletedAt = model.deleted_at,
+            Name = model.name,
+            Model = model.model,
+            ContextSize = model.context_size,
+            Temperature = model.temperature,
+        };
+    }
+
+    public delegate void UpdateHandler();
+
+    public event UpdateHandler? Updated;
+
+    public void Update(Chat chat)
+    {
+        Id = chat.Id;
+        CreatedAt = chat.CreatedAt;
+        DeletedAt = chat.DeletedAt;
+        Name = chat.Name;
+        Model = chat.Model;
+        ContextSize = chat.ContextSize;
+        Temperature = chat.Temperature;
+        Updated?.Invoke();
     }
 }

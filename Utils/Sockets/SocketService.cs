@@ -36,6 +36,7 @@ public class SocketService
     {
         _client.On(key, response =>
         {
+            Console.WriteLine($"Socket {key}");
             var data = response.GetValue<SocketDataModel<T>>();
             if (data != null)
             {
@@ -57,5 +58,15 @@ public class SocketService
                 await response.CallbackAsync(callback);
             }
         });
+    }
+
+    public async Task Emit(string key, params object[] data)
+    {
+        if (!_client.Connected)
+        {
+            Console.WriteLine("Not connected");
+            return;
+        }
+        await _client.EmitAsync(key, data);
     }
 }

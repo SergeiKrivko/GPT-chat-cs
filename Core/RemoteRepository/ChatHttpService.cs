@@ -22,8 +22,9 @@ public class ChatHttpService: BodyDetailHttpService
     
     private ChatSocketService _socketService;
 
-    public delegate void NewChatHeader(Chat chat);
-    public event NewChatHeader? NewChat;
+    public delegate void ChatHeader(Chat chat);
+    public event ChatHeader? ChatAdded;
+    public event ChatHeader? ChatUpdated;
 
     public delegate void DeleteChatHeader(Guid chatId);
     public event DeleteChatHeader? DeleteChat;
@@ -36,14 +37,26 @@ public class ChatHttpService: BodyDetailHttpService
         OnUserChanged(AuthService.Instance.User);
 
         _socketService = new ChatSocketService();
+        _socketService.Subscribe<List<ChatReadModel>>("new_chats", chats =>
+        {
+            foreach (var chat in chats)
+            {
+                ChatAdded?.Invoke(Chat.FromReadModel(chat));
+            }
+        });
+        _socketService.Subscribe<ChatReadModel>("update_chat", chat =>
+        {
+            Console.WriteLine("Updating chat...");
+            ChatUpdated?.Invoke(Chat.FromReadModel(chat));
+        });
         
     }
 
-    public async Task<List<GetChatResponseBody>> GetAllChats()
+    public async Task<List<ChatReadModel>> GetAllChats()
     {
         try
         {
-            return await Get<List<GetChatResponseBody>>("/api/v1/chats");
+            return await Get<List<ChatReadModel>>("/api/v1/chats");
         }
         catch (NotFoundException)
         {
@@ -51,11 +64,11 @@ public class ChatHttpService: BodyDetailHttpService
         }
     }
 
-    public async Task<List<GetChatResponseBody>> GetAllChatsCreatedAfter(DateTime time)
+    public async Task<List<ChatReadModel>> GetAllChatsCreatedAfter(DateTime time)
     {
         try
         {
-            return await Get<List<GetChatResponseBody>>($"/api/v1/chats?created_after={time:s}");
+            return await Get<List<ChatReadModel>>($"/api/v1/chats?created_after={time:s}");
         }
         catch (NotFoundException)
         {
@@ -63,11 +76,11 @@ public class ChatHttpService: BodyDetailHttpService
         }
     }
 
-    public async Task<List<GetChatResponseBody>> GetAllChatsDeletedAfter(DateTime time)
+    public async Task<List<ChatReadModel>> GetAllChatsDeletedAfter(DateTime time)
     {
         try
         {
-            return await Get<List<GetChatResponseBody>>($"/api/v1/chats?deleted_after={time:s}");
+            return await Get<List<ChatReadModel>>($"/api/v1/chats?deleted_after={time:s}");
         }
         catch (NotFoundException)
         {
@@ -84,16 +97,7 @@ public class ChatHttpService: BodyDetailHttpService
     {
         foreach (var chat in await GetAllChatsCreatedAfter(timeStamp))
         {
-            NewChat?.Invoke(new Chat
-            {
-                Id = chat.uuid,
-                CreatedAt = chat.created_at,
-                DeletedAt = chat.deleted_at,
-                Name = chat.name,
-                Model = chat.model,
-                ContextSize = chat.context_size ?? 0,
-                Temperature = chat.temperature ?? 0.5,
-            });
+            ChatAdded?.Invoke(Chat.FromReadModel(chat));
         }
 
         foreach (var chat in await GetAllChatsDeletedAfter(timeStamp))
@@ -121,23 +125,6 @@ public class ChatHttpService: BodyDetailHttpService
                 await LoadChats(timeStamp);
                 SettingsService.Instance.Set($"{user?.Id}-timestamp", DateTime.Now);
                 await _socketService.Connect();
-                _socketService.Subscribe<List<GetChatResponseBody>>("new_chats", chats =>
-                {
-                    Console.WriteLine($"Socket: {chats.Count}");
-                    foreach (var chat in chats)
-                    {
-                        NewChat?.Invoke(new Chat
-                        {
-                            Id = chat.uuid,
-                            CreatedAt = chat.created_at,
-                            DeletedAt = chat.deleted_at,
-                            Name = chat.name,
-                            Model = chat.model,
-                            ContextSize = chat.context_size ?? 0,
-                            Temperature = chat.temperature ?? 0.5,
-                        });
-                    }
-                });
                 break;
             }
             catch (ConnectionException)
@@ -148,5 +135,15 @@ public class ChatHttpService: BodyDetailHttpService
             await Task.Delay(20000);
             Console.WriteLine("Trying to load updates...");
         }
+    }
+
+    public async Task CreateChat()
+    {
+        await _socketService.Emit("new_chat");
+    }
+
+    public async Task UpdateChat(Guid id, ChatUpdateModel chat)
+    {
+        await _socketService.Emit("update_chat", id, chat);
     }
 }
