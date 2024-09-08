@@ -7,7 +7,7 @@ using Utils.Http.Exceptions;
 
 namespace Core.RemoteRepository;
 
-public class MessageHttpService: BodyDetailHttpService
+public class MessageHttpService : BodyDetailHttpService
 {
     private static MessageHttpService? _instance;
 
@@ -19,15 +19,21 @@ public class MessageHttpService: BodyDetailHttpService
             return _instance;
         }
     }
-    
+
     private ChatSocketService _socketService;
 
-    public delegate void MessageHeader(Message message);
-    public event MessageHeader? MessageAdded;
-    public event MessageHeader? MessageUpdated;
+    public delegate void MessageHandler(Message message);
 
-    public delegate void DeleteMessageHeader(Guid messageId);
-    public event DeleteMessageHeader? MessageDeleted;
+    public event MessageHandler? MessageAdded;
+    public event MessageHandler? MessageUpdated;
+
+    public delegate void DeleteMessageHandler(Guid messageId);
+
+    public event DeleteMessageHandler? MessageDeleted;
+
+    public delegate void AddContentHandler(Guid chatId, Guid messageId, string content);
+
+    public event AddContentHandler? MessageContentAdded;
 
     private MessageHttpService()
     {
@@ -44,12 +50,11 @@ public class MessageHttpService: BodyDetailHttpService
                 MessageAdded?.Invoke(Message.FromReadModel(message));
             }
         });
-        _socketService.Subscribe<MessageReadModel>("update_message", message =>
+        _socketService.Subscribe<MessageAddContentModel>("message_add_content", data =>
         {
-            Console.WriteLine("Updating message...");
-            MessageUpdated?.Invoke(Message.FromReadModel(message));
+            Console.WriteLine("Adding content to message...");
+            MessageContentAdded?.Invoke(data.chat, data.uuid, data.content);
         });
-        
     }
 
     public async Task<List<MessageReadModel>> GetAllMessages()
@@ -130,8 +135,8 @@ public class MessageHttpService: BodyDetailHttpService
         }
     }
 
-    public async Task CreateMessage(MessageCreateModel model)
+    public async Task CreateMessage(MessageCreateModel model, bool prompt)
     {
-        await _socketService.Emit("new_message", model);
+        await _socketService.Emit("new_message", model, prompt);
     }
 }

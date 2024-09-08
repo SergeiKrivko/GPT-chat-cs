@@ -17,6 +17,7 @@ public class ChatsService
         ChatHttpService.Instance.ChatUpdated += OnChatUpdated;
         AuthService.Instance.UserChanged += OnUserChanged;
         MessageHttpService.Instance.MessageAdded += OnMessageAdded;
+        MessageHttpService.Instance.MessageContentAdded += OnMessageContentAdded;
         OnUserChanged(AuthService.Instance.User);
     }
 
@@ -119,9 +120,16 @@ public class ChatsService
         }
     }
     
-    public async Task CreateMessage()
+    public async Task CreateMessage(Chat chat, string role, string content, bool prompt = false)
     {
-        await ChatHttpService.Instance.CreateChat();
+        await MessageHttpService.Instance.CreateMessage(new MessageCreateModel
+        {
+            chat_uuid =chat.Id,
+            role = role,
+            content = content,
+            model = chat.Model,
+            temperature = chat.Temperature,
+        }, prompt);
     }
 
     private async void OnMessageAdded(Message message)
@@ -129,6 +137,14 @@ public class ChatsService
         await _localRepository.InsertMessage(message);
         var chat = GetChat(message.ChatId);
         chat.Messages.Add(message);
+    }
+
+    private async void OnMessageContentAdded(Guid chatId, Guid messageId, string content)
+    {
+        var chat = GetChat(chatId);
+        var message = chat.GetMessage(messageId);
+        message.AddContent(content);
+        await _localRepository.SaveMessage(message);
     }
 
     public async Task LoadMessages(Guid chatId, int count)

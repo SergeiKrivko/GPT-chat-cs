@@ -6,8 +6,8 @@ namespace Core;
 
 public class Message
 {
-    [PrimaryKey] public Guid Id { get; set; }
-    [Indexed] public Guid ChatId { get; set; }
+    public Guid Id { get; set; }
+    public Guid ChatId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
     public string Role { get; set; }
@@ -58,5 +58,15 @@ public class Message
             Model = model.model,
             Temperature = model.temperature,
         };
+    }
+    
+    public delegate void UpdateHandler();
+
+    public event UpdateHandler? Updated;
+
+    public void AddContent(string content)
+    {
+        Content += content;
+        Updated?.Invoke();
     }
 }

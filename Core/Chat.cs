@@ -75,4 +75,15 @@ public class Chat
         Temperature = chat.Temperature;
         Updated?.Invoke();
     }
+
+    public Message GetMessage(Guid id)
+    {
+        foreach (var message in Messages)
+        {
+            if (message.Id == id)
+                return message;
+        }
+
+        throw new KeyNotFoundException("Message not found");
+    }
 }

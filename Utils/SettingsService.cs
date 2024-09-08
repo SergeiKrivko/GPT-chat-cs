@@ -22,7 +22,7 @@ public class SettingsService
     private SettingsService()
     {
         _path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
-            "GPT-chat");
+            "GPT-chat-test");
         Directory.CreateDirectory(_path);
         _path = Path.Join(_path, "settings.xml");
         LoadSettings();

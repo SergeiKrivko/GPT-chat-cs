@@ -90,6 +90,7 @@ public class AuthService : HttpService
             }
             if (User.ExpiresAt != null)
             {
+                Refreshed = true;
                 await Task.Delay(int.Max(0, (int)(User.ExpiresAt - DateTime.Now).Value.TotalMilliseconds - 10));
             }
             try

@@ -81,4 +81,13 @@ public partial class ChatWidget : UserControl
             ChatSettingsView.Save();
         }
     }
+
+    private async void SendButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var text = InputBox.Text;
+        if (String.IsNullOrEmpty(text))
+            return;
+        InputBox.Text = "";
+        await ChatsService.Instance.CreateMessage(Chat, "user", text, true);
+    }
 }
