@@ -130,10 +130,10 @@ jobs:
         run: |
           cd GptChat/GptChat.Android
           dotnet workload restore
-          dotnet build -c Release
+          dotnet build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: GptChat/GptChat.Android/bin/Release/net8.0-android/com.CompanyName.GptChat-Signed.apk
+          name: GptChat/GptChat.Android/bin/Debug/net8.0-android/com.CompanyName.GptChat-Signed.apk
           path: GPT-chat-avalonia.apk
