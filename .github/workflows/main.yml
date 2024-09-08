@@ -25,12 +25,6 @@ jobs:
         with:
           path: Releases/win-x64/setup.iss
           options: /O+
-          
-      - run: |
-          ls
-          ls GptChat
-          ls Releases
-          ls Releases\win-x64
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
@@ -76,32 +70,36 @@ jobs:
           name: GPT-chat-linux-x64.exe
           path: Releases/wlinux-x64/gptchat-avalonia_1.0.0_amd64.deb
           
-#  build-macos-x64:
-#    name: Build for Linux
-#    runs-on: macos-12
-#
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#
-#      - name: Setup .Net
-#        uses: actions/setup-dotnet@v4
-#        with:
-#          dotnet-version: 8.0
-#
-#      - name: Build
-#        run: |
-#          cd GptChat/GptChat.Desktop
-#          dotnet build --sc --runtime mac-x64 -c Release
-#
-#      - name: Create installer
-#        uses: QQxiaoming/create-dmg-action@v0.0.2
-#        with:
-#          name: 'GPT-chat'
-#          srcdir: 'dist/GPT-chat.app'
-#
-#      - name: Upload artifacts
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: GPT-chat-linux-x64.exe
-#          path: Releases/wlinux-x64/gptchat-avalonia_1.0.0_amd64.deb
+  build-macos-x64:
+    name: Build for Linux
+    runs-on: macos-12
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .Net
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0
+
+      - name: Build
+        run: |
+          cd GptChat/GptChat.Desktop
+          dotnet build --sc --runtime mac-x64 -c Release
+
+      - name: Prepare package
+        run: |
+          cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/mac-x64 Releases/mac-x64/MacOS
+
+      - name: Create installer
+        uses: QQxiaoming/create-dmg-action@v0.0.2
+        with:
+          name: GPT-chat-avalonia
+          srcdir: Releases/mac-x64/GPT-chat-avalonia.app
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: GPT-chat-linux-x64.exe
+          path: Releases/wlinux-x64/gptchat-avalonia_1.0.0_amd64.deb
