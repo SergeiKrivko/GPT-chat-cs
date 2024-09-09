@@ -91,7 +91,7 @@ jobs:
       - name: Prepare package
         run: |
           cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/osx-x64 Releases/mac-x64/GPT-chat-avalonia.app/Contents
-          mv Releases/mac-x64/Contents/osx-x64 Releases/mac-x64/GPT-chat-avalonia.app/Contents/MacOS
+          mv Releases/mac-x64/Contents/GPT-chat-avalonia.app/osx-x64 Releases/mac-x64/GPT-chat-avalonia.app/Contents/MacOS
           
           echo --------------------------------------- Releases/mac-x64/GPT-chat-avalonia.app/Contents
           ls Releases/mac-x64/GPT-chat-avalonia.app/Contents
