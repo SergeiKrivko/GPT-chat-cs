@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using Microsoft.Extensions.Logging;
 using Utils;
 using Utils.Http;
 using Utils.Http.Exceptions;
@@ -13,8 +14,23 @@ public class AuthService : HttpService
 
     private HttpClient _client = new HttpClient();
     private User? _user;
+    private ILogger _logger = LogService.CreateLogger("Auth");
 
-    public bool Refreshed { get; private set; } = false;
+    private bool _refreshed = false;
+
+    public bool Refreshed
+    {
+        get => _refreshed;
+        private set
+        {
+            _refreshed = false;
+            if (value && _user != null)
+            {
+                _refreshed = true;
+                UserReady?.Invoke(_user);
+            }
+        }
+    }
 
     public User? User
     {
@@ -27,6 +43,8 @@ public class AuthService : HttpService
                 UserChanged?.Invoke(_user);
                 SettingsService.Instance.Set("user", _user);
             }
+
+            RefreshTokenLoop();
         }
     }
 
@@ -42,13 +60,13 @@ public class AuthService : HttpService
     private AuthService()
     {
         User = SettingsService.Instance.Get<User>("user");
-        // Unauthorized += RefreshToken;
-        RefreshTokenLoop();
     }
 
     public delegate void UserChangeHandler(User? user);
-
     public event UserChangeHandler? UserChanged;
+    
+    public delegate void UserReadyHandler(User user);
+    public event UserReadyHandler? UserReady;
 
     public async Task<User?> SignIn(SignInRequestBody body)
     {
@@ -77,34 +95,52 @@ public class AuthService : HttpService
         return null;
     }
 
+    private Guid? _operationId;
+
     private async void RefreshTokenLoop()
     {
+        if (User == null)
+            return;
+        
+        var operationId = Guid.NewGuid();
+        _operationId = operationId;
+        
+        Refreshed = false;
         while (true)
         {
+            if (_operationId != operationId)
+                break;
             if (User == null || User.RefreshToken == null)
             {
-                Console.WriteLine("Token refresh failed: log out");
+                _logger.LogInformation("Token refresh failed: log out");
                 User = null;
-                await Task.Delay(100000);
-                continue;
+                break;
             }
+
             if (User.ExpiresAt != null)
             {
                 Refreshed = true;
-                await Task.Delay(int.Max(0, (int)(User.ExpiresAt - DateTime.Now).Value.TotalMilliseconds - 10));
+                _logger.LogDebug($"Waiting {int.Max(0, (int)(User.ExpiresAt - DateTime.Now).Value.TotalMilliseconds - 10000)} ms");
+                await Task.Delay(int.Max(0, (int)(User.ExpiresAt - DateTime.Now).Value.TotalMilliseconds - 10000));
             }
+            
+            if (_operationId != operationId)
+                break;
+            
             try
             {
                 await RefreshToken();
             }
             catch (ConnectionException)
             {
-                Console.WriteLine("Token refresh failed: no connection");
+                Refreshed = false;
+                _logger.LogInformation("Token refresh failed: no connection");
                 await Task.Delay(10000);
             }
             catch (HttpServiceException)
             {
-                Console.WriteLine("Token refresh failed: log out");
+                Refreshed = false;
+                _logger.LogInformation("Token refresh failed: log out");
                 User = null;
                 await Task.Delay(100000);
             }
@@ -127,7 +163,7 @@ public class AuthService : HttpService
         User.RefreshToken = resp.refresh_token;
         User.ExpiresAt = DateTime.Now + TimeSpan.FromSeconds(resp.expires_in);
         User = User;
-        Console.WriteLine("Token refreshed success");
+        _logger.LogInformation("Token was refreshed successfully");
         Refreshed = true;
     }
 }

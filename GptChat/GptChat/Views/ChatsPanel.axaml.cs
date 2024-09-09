@@ -41,10 +41,14 @@ public partial class ChatsPanel : UserControl
             {
                 foreach (var item in e.NewItems)
                 {
-                    var widget = new ChatWidget((Chat)item);
-                    widget.IsVisible = false;
-                    _widgets[widget.Chat.Id] = widget;
-                    Panel.Children.Add(widget);
+                    var chat = (Chat)item;
+                    if (!_widgets.ContainsKey(chat.Id))
+                    {
+                        var widget = new ChatWidget((Chat)item);
+                        widget.IsVisible = false;
+                        _widgets[widget.Chat.Id] = widget;
+                        Panel.Children.Add(widget);
+                    }
                 }
             }
 
@@ -52,7 +56,11 @@ public partial class ChatsPanel : UserControl
             {
                 foreach (var item in e.OldItems)
                 {
-                    Panel.Children.Remove(_widgets[((Chat)item).Id]);
+                    var chat = (Chat)item;
+                    if (_widgets.ContainsKey(chat.Id))
+                    {
+                        Panel.Children.Remove(_widgets[((Chat)item).Id]);
+                    }
                 }
             }
         });

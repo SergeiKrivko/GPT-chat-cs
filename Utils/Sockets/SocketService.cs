@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SocketIOClient;
 using SocketIOClient.Transport;
 
@@ -6,11 +7,12 @@ namespace Utils.Sockets;
 
 public class SocketService
 {
-    private readonly SocketIOClient.SocketIO _client;
+    protected readonly SocketIOClient.SocketIO Client;
+    protected readonly ILogger Logger = LogService.CreateLogger("Sockets");
 
     protected SocketService(string url)
     {
-        _client = new SocketIOClient.SocketIO(url, new SocketIOOptions
+        Client = new SocketIOClient.SocketIO(url, new SocketIOOptions
         {
             Transport = TransportProtocol.WebSocket,
         });
@@ -22,11 +24,13 @@ public class SocketService
 
     public async Task Connect(string? token)
     {
+        if (Client.Connected)
+            await Client.DisconnectAsync();
         if (token != null)
-            _client.Options.Auth = token;
-        Console.WriteLine($"Connecting sockets...");
-        await _client.ConnectAsync();
-        Console.WriteLine("Sockets connected");
+            Client.Options.Auth = token;
+        Logger.LogInformation("Connecting...");
+        await Client.ConnectAsync();
+        Logger.LogInformation("Connected");
     }
 
     public delegate void Handler<T>(T data);
@@ -34,9 +38,9 @@ public class SocketService
 
     public void Subscribe<T>(string key, Handler<T> handler)
     {
-        _client.On(key, response =>
+        Client.On(key, response =>
         {
-            Console.WriteLine($"Socket {key}");
+            Logger.LogDebug($"Socket {key} received");
             var data = response.GetValue<SocketDataModel<T>>();
             if (data != null)
             {
@@ -48,8 +52,9 @@ public class SocketService
     
     public void Subscribe<T>(string key, HandlerWithCallback<T> handler)
     {
-        _client.On(key, async response =>
+        Client.On(key, async response =>
         {
+            Logger.LogDebug($"Socket '{key}' received");
             var data = response.GetValue<SocketDataModel<T>>();
             if (data != null)
             {
@@ -62,11 +67,12 @@ public class SocketService
 
     public async Task Emit(string key, params object[] data)
     {
-        if (!_client.Connected)
+        if (!Client.Connected)
         {
-            Console.WriteLine("Not connected");
+            Logger.LogWarning($"Not connected: failed to emit '{key}'");
             return;
         }
-        await _client.EmitAsync(key, data);
+        Logger.LogDebug($"Socket '{key}' emitted");
+        await Client.EmitAsync(key, data);
     }
 }

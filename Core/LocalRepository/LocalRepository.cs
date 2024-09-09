@@ -22,7 +22,7 @@ public class LocalRepository
         }
     }
 
-    public async Task<SQLiteAsyncConnection> Init()
+    public async Task Init()
     {
         if (_database != null)
             await _database.CloseAsync();
@@ -39,12 +39,10 @@ public class LocalRepository
         }
         Directory.CreateDirectory(path);
         path = Path.Join(path, "Database.db");
-        _database = new SQLiteAsyncConnection(path, SQLite.SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
+        _database = new SQLiteAsyncConnection(path, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
 
         Chats = new Repository<ChatLocalModel>(_database);
         Messages = new Repository<MessageLocalModel>(_database);
-        
-        return _database;
     }
 
     public async Task<Chat> GetChat(Guid id)
