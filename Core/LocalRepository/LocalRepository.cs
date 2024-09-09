@@ -27,7 +27,7 @@ public class LocalRepository
             await _database.CloseAsync();
         
         var path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
-            "GPT-chat-test");
+            "GPT-chat");
         if (AuthService.Instance.User == null)
         {
             path = Path.Join(path, "DefaultUser");

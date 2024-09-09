@@ -90,8 +90,8 @@ jobs:
 
       - name: Prepare package
         run: |
-          cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/osx-x64 Releases/mac-x64
-          mv Releases/mac-x64/osx-x64 Releases/mac-x64/MacOS
+          cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/osx-x64 Releases/mac-x64/Contents
+          mv Releases/mac-x64/Contents/osx-x64 Releases/mac-x64/Contents/MacOS
 
       - name: Create installer
         uses: QQxiaoming/create-dmg-action@v0.0.2
