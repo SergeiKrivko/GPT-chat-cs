@@ -73,7 +73,7 @@ public class LocalRepository
 
     public async Task<Message> GetMessage(Guid id)
     {
-        return Message.FromLocalModel(await Messages.Get(t => t.Id == id));
+        return Message.FromLocalModel(await Messages.Get(t => t.Id == id, t => t.CreatedAt));
     }
 
     public async Task<List<Message>> GetAllMessages(Guid chatId)

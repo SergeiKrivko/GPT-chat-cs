@@ -44,6 +44,17 @@ public class Repository<T> where T: new()
 
         return res;
     }
+    
+    public async Task<T> Get<U>(Expression<Func<T, bool>> predExpr, Expression<Func<T, U>> orderExpr)
+    {
+        var res = await _database.Table<T>().Where(predExpr).OrderBy(orderExpr).FirstAsync();
+        if (res == null)
+        {
+            throw new Exception("Not Found");
+        }
+
+        return res;
+    }
 
     public async Task Insert(T item)
     {

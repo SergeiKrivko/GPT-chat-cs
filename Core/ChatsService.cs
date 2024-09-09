@@ -33,6 +33,7 @@ public class ChatsService
             await _localRepository.Init();
             _logger.LogDebug("Loading chats from local repository");
             await _loadLocalChats();
+            SortChats();
             if (AuthService.Instance.User != null && AuthService.Instance.Refreshed)
                 OnUserReady(AuthService.Instance.User);
             else
@@ -164,6 +165,7 @@ public class ChatsService
         await _localRepository.InsertMessage(message);
         var chat = GetChat(message.ChatId);
         chat.Messages.Add(message);
+        SortChats();
     }
 
     private async void OnMessageContentAdded(Guid chatId, Guid messageId, string content)
@@ -186,5 +188,32 @@ public class ChatsService
         {
             chat.Messages.Insert(0, message);
         }
+    }
+
+    private async Task<DateTime> GetChatLastMessageTime(Chat chat)
+    {
+        var messages = await _localRepository.GetAllMessages(chat.Id);
+        if (messages.Count == 0)
+            return default;
+        chat.LastMessageTime = messages[^1].CreatedAt;
+        _logger.LogDebug($"Chat '{chat.Name}' last message = {messages[^1].CreatedAt}");
+        return messages[^1].CreatedAt;
+    }
+
+    public async void SortChats()
+    {
+        _logger.LogDebug("Start sorting chats...");
+        foreach (var chat in Chats)
+        {
+            await GetChatLastMessageTime(chat);
+        }
+        var chats = Chats.ToList();
+        chats.Sort();
+        Chats.Clear();
+        foreach (var chat in chats)
+        {
+            Chats.Insert(0, chat);
+        }
+        _logger.LogDebug("Chats sorted...");
     }
 }

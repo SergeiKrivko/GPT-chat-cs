@@ -5,7 +5,7 @@ using SQLite;
 
 namespace Core;
 
-public class Chat
+public class Chat : IComparable<Chat>
 {
     public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -17,6 +17,8 @@ public class Chat
     
     public ObservableCollection<Message> Messages { get; } = new();
     public int? LastLoadedMessage { get; set; } = null;
+    
+    public DateTime? LastMessageTime { get; set; }
 
     public ChatLocalModel ToLocalModel()
     {
@@ -85,5 +87,18 @@ public class Chat
         }
 
         throw new KeyNotFoundException("Message not found");
+    }
+
+    public int CompareTo(Chat? other)
+    {
+        if (LastMessageTime == null)
+        {
+            if (other?.LastMessageTime == null)
+                return 0;
+            return -1;
+        }
+        if (other?.LastMessageTime == null)
+            return 1;
+        return LastMessageTime > other.LastMessageTime ? 1 : -1;
     }
 }

@@ -40,7 +40,7 @@ public class SocketService
     {
         Client.On(key, response =>
         {
-            Logger.LogDebug($"Socket {key} received");
+            Logger.LogDebug($"Socket '{key}' received");
             var data = response.GetValue<SocketDataModel<T>>();
             if (data != null)
             {
