@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
@@ -33,5 +34,10 @@ public partial class Bubble : UserControl
             Message.Role == "user" ? 10 : 0);
         // TextBlock.Text = Message?.Content;
         MarkdownViewer.Markdown = Message.Content;
+    }
+
+    private void CopyText_OnClick(object? sender, RoutedEventArgs e)
+    {
+        
     }
 }

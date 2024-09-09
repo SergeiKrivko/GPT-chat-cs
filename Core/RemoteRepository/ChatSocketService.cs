@@ -17,7 +17,7 @@ public class ChatSocketService: SocketService
         }
     }
     
-    public ChatSocketService() : base("http://localhost:8000/")
+    public ChatSocketService() : base(Config.BaseUrl)
     {
         TimeUpdated += time => SettingsService.Instance.Set($"{AuthService.Instance.User?.Id}-timestamp", time);
     }

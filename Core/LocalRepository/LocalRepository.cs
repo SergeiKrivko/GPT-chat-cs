@@ -1,6 +1,7 @@
 ﻿using Auth;
 using Core.LocalRepository.Models;
 using SQLite;
+using Utils;
 
 namespace Core.LocalRepository;
 
@@ -27,7 +28,7 @@ public class LocalRepository
             await _database.CloseAsync();
         
         var path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
-            "GPT-chat");
+            Config.AppName);
         if (AuthService.Instance.User == null)
         {
             path = Path.Join(path, "DefaultUser");

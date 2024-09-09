@@ -9,6 +9,33 @@
         <Border Name="InnerBorder" Background="Gray" MaxWidth="500" CornerRadius="10 10 10 10">
             <md:MarkdownScrollViewer Name="MarkdownViewer" Margin="10 7 10 7"/>
             <!-- <TextBlock Name="TextBlock" Margin="10" TextWrapping="Wrap"></TextBlock> -->
+            
+            <Border.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Ответить">
+                        <MenuItem.Icon>
+                            <PathIcon Data="{DynamicResource IconReply}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Копировать как текст" Click="CopyText_OnClick">
+                        <MenuItem.Icon>
+                            <PathIcon Data="{DynamicResource IconCopy}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Копировать как markdown">
+                        <MenuItem.Icon>
+                            <PathIcon Data="{DynamicResource IconCopyMd}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Удалить">
+                        <MenuItem.Icon>
+                            <PathIcon Data="{DynamicResource IconTrash}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </Border.ContextMenu>
         </Border>
     </Panel>
 </UserControl>

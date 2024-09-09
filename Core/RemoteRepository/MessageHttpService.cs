@@ -37,7 +37,7 @@ public class MessageHttpService : BodyDetailHttpService
 
     private MessageHttpService()
     {
-        BaseUrl = "http://127.0.0.1:8000";
+        BaseUrl = Config.BaseUrl;
         Token = AuthService.Instance.User?.IdToken;
         AuthService.Instance.UserChanged += OnUserChanged;
         OnUserChanged(AuthService.Instance.User);
