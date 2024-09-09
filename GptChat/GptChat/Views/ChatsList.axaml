@@ -11,13 +11,15 @@
             <Button Width="40" Height="40" Background="Transparent" Click="CreateChatButton_OnClick">
                 <PathIcon Data="{DynamicResource IconPlus}"></PathIcon>
             </Button>
-            <Button Width="40" Height="40" Background="Transparent">
+            <ToggleButton Width="40" Height="40" Background="Transparent">
                 <PathIcon Data="{DynamicResource IconArchive}"/>
-            </Button>
+            </ToggleButton>
+            <!-- <Button Width="40" Height="40" Background="Transparent"> -->
+            <!--     <PathIcon Data="{DynamicResource IconUser}"/> -->
+            <!-- </Button> -->
             <Button Width="40" Height="40" Background="Transparent">
-                <PathIcon Data="{DynamicResource IconUser}"/>
+                <PathIcon Data="{DynamicResource IconSettings}"></PathIcon>
             </Button>
-            <Button Content="S" Width="40" Height="40" Background="Transparent"></Button>
         </StackPanel>
         <ListBox Name="ChatsListBox" SelectionChanged="ChatsListBox_OnSelectionChanged" ItemsSource="{Binding Service.Chats}">
             <ListBox.ItemTemplate>
