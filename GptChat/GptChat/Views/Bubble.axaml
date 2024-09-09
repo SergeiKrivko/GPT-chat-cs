@@ -23,7 +23,7 @@
                             <PathIcon Data="{DynamicResource IconCopy}"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="Копировать как markdown">
+                    <MenuItem Header="Копировать как markdown" Click="CopyText_OnClick">
                         <MenuItem.Icon>
                             <PathIcon Data="{DynamicResource IconCopyMd}"/>
                         </MenuItem.Icon>

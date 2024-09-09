@@ -36,8 +36,12 @@ public partial class Bubble : UserControl
         MarkdownViewer.Markdown = Message.Content;
     }
 
-    private void CopyText_OnClick(object? sender, RoutedEventArgs e)
+    private async void CopyText_OnClick(object? sender, RoutedEventArgs e)
     {
-        
+        var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+        if (clipboard != null)
+        {
+            await clipboard.SetTextAsync(MarkdownViewer.Markdown);
+        }
     }
 }
