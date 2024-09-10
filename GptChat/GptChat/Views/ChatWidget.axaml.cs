@@ -51,7 +51,13 @@ public partial class ChatWidget : UserControl
         {
             var widget = new Bubble(obj);
             _bubbles[widget.Message.Id] = widget;
-            BubblesStackPanel.Children.Insert(index, widget);
+            try
+            {
+                BubblesStackPanel.Children.Insert(index, widget);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+            }
         });
     }
 

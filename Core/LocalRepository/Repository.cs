@@ -44,10 +44,18 @@ public class Repository<T> where T: new()
 
     public async Task<T> Get(Expression<Func<T, bool>> predExpr)
     {
-        var res = await _database.Table<T>().Where(predExpr).FirstAsync();
+        T? res;
+        try
+        {
+            res = await _database.Table<T>().Where(predExpr).FirstAsync();
+        }
+        catch (Exception e)
+        {
+            res = default;
+        }
         if (res == null)
         {
-            throw new Exception("Not Found");
+            throw new KeyNotFoundException("Not Found");
         }
 
         return res;

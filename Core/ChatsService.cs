@@ -132,8 +132,15 @@ public class ChatsService
     private async void OnChatDeleted(Guid chatId)
     {
         _logger.LogDebug($"Deleting chat '{chatId}'...");
-        Chats.Remove(GetChat(chatId));
-        await _localRepository.RemoveChat(chatId);
+        try
+        {
+            Chats.Remove(GetChat(chatId));
+            await _localRepository.RemoveChat(chatId);
+        }
+        catch (KeyNotFoundException e)
+        {
+            _logger.LogWarning($"Chat '{chatId} not found");
+        }
     }
 
     public async void SaveChat(Chat chat)
@@ -186,7 +193,7 @@ public class ChatsService
         await _localRepository.InsertMessage(message);
         var chat = GetChat(message.ChatId);
         chat.Messages.Add(message);
-        SortChats();
+        // SortChats();
     }
 
     private async void OnMessageContentAdded(Guid chatId, Guid messageId, string content)
@@ -218,7 +225,7 @@ public class ChatsService
             }
         }
         await _localRepository.RemoveMessage(messageId);
-        SortChats();
+        // SortChats();
     }
 
     public async Task LoadMessages(Guid chatId, int count)

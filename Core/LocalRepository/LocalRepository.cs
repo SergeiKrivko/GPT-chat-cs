@@ -105,7 +105,13 @@ public class LocalRepository
 
     public async Task RemoveMessage(Guid messageId)
     {
-        var message = await Messages.Get(t => t.Id == messageId);
-        await Messages.Remove(message);
+        try
+        {
+            var message = await Messages.Get(t => t.Id == messageId);
+            await Messages.Remove(message);
+        }
+        catch (KeyNotFoundException e)
+        {
+        }
     }
 }
