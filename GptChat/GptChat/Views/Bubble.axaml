@@ -30,7 +30,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
-                    <MenuItem Header="Удалить">
+                    <MenuItem Header="Удалить" Click="DeleteMessage_OnClick">
                         <MenuItem.Icon>
                             <PathIcon Data="{DynamicResource IconTrash}"/>
                         </MenuItem.Icon>

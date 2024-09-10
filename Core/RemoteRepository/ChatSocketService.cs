@@ -31,7 +31,6 @@ public class ChatSocketService : SocketService
     public delegate void MessageHandler(Message message);
 
     public event MessageHandler? MessageAdded;
-    public event MessageHandler? MessageUpdated;
 
     public delegate void DeleteMessageHandler(Guid messageId);
 
@@ -63,6 +62,13 @@ public class ChatSocketService : SocketService
             foreach (var message in messages)
             {
                 MessageAdded?.Invoke(Message.FromReadModel(message));
+            }
+        });
+        Subscribe<List<Guid>>("delete_messages", messages =>
+        {
+            foreach (var message in messages)
+            {
+                MessageDeleted?.Invoke(message);
             }
         });
         Subscribe<MessageAddContentModel>("message_add_content", data =>
@@ -124,6 +130,11 @@ public class ChatSocketService : SocketService
         await Emit("new_chat");
     }
     
+    public async Task DeleteChat(Guid chatId)
+    {
+        await Emit("delete_chat", chatId);
+    }
+    
     public async Task UpdateChat(Guid id, ChatUpdateModel chat)
     {
         await Emit("update_chat", id, chat);
@@ -132,5 +143,10 @@ public class ChatSocketService : SocketService
     public async Task CreateMessage(MessageCreateModel model, bool prompt)
     {
         await Emit("new_message", model, prompt);
+    }
+    
+    public async Task DeleteMessage(Guid messageId)
+    {
+        await Emit("delete_message", messageId);
     }
 }

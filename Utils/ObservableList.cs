@@ -67,4 +67,9 @@ public class ObservableList<T>
     {
         return _list.GetEnumerator();
     }
+
+    public bool Contains(T item)
+    {
+        return _list.Contains(item);
+    }
 }

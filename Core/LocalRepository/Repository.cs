@@ -33,6 +33,14 @@ public class Repository<T> where T: new()
             throw new Exception("Not Found");
         return lst;
     }
+    
+    public async Task<List<T>> GetAll<U>(Expression<Func<T, bool>> predExpr, Expression<Func<T, U>> orderExpr)
+    {
+        var lst = await _database.Table<T>().Where(predExpr).OrderBy(orderExpr).ToListAsync();
+        if (lst == null)
+            throw new Exception("Not Found");
+        return lst;
+    }
 
     public async Task<T> Get(Expression<Func<T, bool>> predExpr)
     {

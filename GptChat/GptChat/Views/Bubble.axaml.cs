@@ -47,4 +47,9 @@ public partial class Bubble : UserControl
             await clipboard.SetTextAsync(MarkdownViewer.Markdown);
         }
     }
+
+    private async void DeleteMessage_OnClick(object? sender, RoutedEventArgs e)
+    {
+        await ChatsService.Instance.DeleteMessage(Message.Id);
+    }
 }

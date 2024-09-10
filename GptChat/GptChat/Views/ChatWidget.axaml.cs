@@ -45,6 +45,8 @@ public partial class ChatWidget : UserControl
 
     private void OnItemInserted(int index, Message obj)
     {
+        if (_bubbles.ContainsKey(obj.Id))
+            return;
         Dispatcher.UIThread.Post(() =>
         {
             var widget = new Bubble(obj);
@@ -55,6 +57,8 @@ public partial class ChatWidget : UserControl
 
     private void OnItemRemoved(int index, Message obj)
     {
+        if (!_bubbles.ContainsKey(obj.Id))
+            return;
         Dispatcher.UIThread.Post(() =>
         {
             BubblesStackPanel.Children.Remove(_bubbles[obj.Id]);

@@ -73,13 +73,13 @@ public class LocalRepository
 
     public async Task<Message> GetMessage(Guid id)
     {
-        return Message.FromLocalModel(await Messages.Get(t => t.Id == id, t => t.CreatedAt));
+        return Message.FromLocalModel(await Messages.Get(t => t.Id == id));
     }
 
     public async Task<List<Message>> GetAllMessages(Guid chatId)
     {
         var res = new List<Message>();
-        foreach (var model in await Messages.GetAll(m => m.ChatId == chatId))
+        foreach (var model in await Messages.GetAll(m => m.ChatId == chatId, t => t.CreatedAt))
         {
             res.Add(Message.FromLocalModel(model));
         }
@@ -95,5 +95,11 @@ public class LocalRepository
     public async Task InsertMessage(Message message)
     {
         await Messages.Insert(message.ToLocalModel());
+    }
+
+    public async Task RemoveMessage(Guid messageId)
+    {
+        var message = await Messages.Get(t => t.Id == messageId);
+        await Messages.Remove(message);
     }
 }

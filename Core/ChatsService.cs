@@ -19,6 +19,7 @@ public class ChatsService
         ChatSocketService.Instance.ChatAdded += OnChatAdded;
         ChatSocketService.Instance.ChatUpdated += OnChatUpdated;
         ChatSocketService.Instance.MessageAdded += OnMessageAdded;
+        ChatSocketService.Instance.MessageDeleted += OnMessageDeleted;
         ChatSocketService.Instance.MessageContentAdded += OnMessageContentAdded;
         OnUserChanged(AuthService.Instance.User);
     }
@@ -107,6 +108,12 @@ public class ChatsService
         await ChatSocketService.Instance.CreateChat();
     }
 
+    public async Task DeleteChat(Guid chatId)
+    {
+        _logger.LogDebug($"Deleting chat '{chatId}'...");
+        await ChatSocketService.Instance.DeleteChat(chatId);
+    }
+
     private async void OnChatAdded(Chat chat)
     {
         _logger.LogDebug($"Adding chat '{chat.Id}'...");
@@ -159,6 +166,12 @@ public class ChatsService
         }, prompt);
     }
 
+    public async Task DeleteMessage(Guid messageId)
+    {
+        _logger.LogDebug($"Deleting message '{messageId}'...");
+        await ChatSocketService.Instance.DeleteMessage(messageId);
+    }
+
     private async void OnMessageAdded(Message message)
     {
         _logger.LogDebug($"Adding message '{message.Id}'...");
@@ -175,6 +188,29 @@ public class ChatsService
         var message = chat.GetMessage(messageId);
         message.AddContent(content);
         await _localRepository.SaveMessage(message);
+    }
+
+    private async void OnMessageDeleted(Guid messageId)
+    {
+        Message? toRemove = null;
+        foreach (var chat in Chats)
+        {
+            foreach (var message in chat.Messages)
+            {
+                if (message.Id == messageId)
+                {
+                    toRemove = message;
+                    break;
+                }
+            }
+            if (toRemove != null)
+            {
+                chat.Messages.Remove(toRemove);
+                break;
+            }
+        }
+        await _localRepository.RemoveMessage(messageId);
+        SortChats();
     }
 
     public async Task LoadMessages(Guid chatId, int count)
