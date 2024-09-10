@@ -25,7 +25,16 @@
     </Application.Resources>
 
     <Application.Styles>
-        <FluentTheme />
+        <FluentTheme>
+            <FluentTheme.Palettes>
+                <ColorPaletteResources x:Key="Light" 
+                                       Accent="LimeGreen" 
+                                       RegionColor="White" />
+                <ColorPaletteResources x:Key="Dark" 
+                                       Accent="DarkGreen" 
+                                       RegionColor="Black" />
+            </FluentTheme.Palettes>
+        </FluentTheme>
 
         <Style Selector="TextBox.ChatInput">
             <Setter Property="Background" Value="Transparent" />

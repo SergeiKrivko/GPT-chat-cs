@@ -6,7 +6,12 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="views:ChatsList"
              x:Class="GptChat.Views.ChatsList">
-    <StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        
         <StackPanel Orientation="Horizontal" Spacing="5" Margin="5">
             <Button Width="40" Height="40" Background="Transparent" Click="CreateChatButton_OnClick">
                 <PathIcon Data="{DynamicResource IconPlus}"></PathIcon>
@@ -21,18 +26,20 @@
                 <PathIcon Data="{DynamicResource IconSettings}"></PathIcon>
             </Button>
         </StackPanel>
-        <ListBox Name="ChatsListBox" SelectionChanged="ChatsListBox_OnSelectionChanged" ItemsSource="{Binding Service.Chats}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <!-- <PathIcon Data="{Binding Type.IconPath}" Width="30" Height="30"/> -->
-                        <StackPanel>
-                            <TextBlock Text="{Binding Name}"/>
-                            <!-- <TextBlock Text="{Binding Path}" FontSize="10"/> -->
+        <Border Grid.Row="1" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <ListBox Name="ChatsListBox" SelectionChanged="ChatsListBox_OnSelectionChanged" ItemsSource="{Binding Service.Chats}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <!-- <PathIcon Data="{Binding Type.IconPath}" Width="30" Height="30"/> -->
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}"/>
+                                <!-- <TextBlock Text="{Binding Path}" FontSize="10"/> -->
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+    </Grid>
 </UserControl>

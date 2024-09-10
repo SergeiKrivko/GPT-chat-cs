@@ -6,7 +6,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="GptChat.Views.Bubble">
     <Panel>
-        <Border Name="InnerBorder" Background="Gray" MaxWidth="500" CornerRadius="10 10 10 10">
+        <Border Name="InnerBorder" Background="{DynamicResource ButtonBackgroundPressed}" 
+                MaxWidth="500" CornerRadius="10 10 10 10">
             <md:MarkdownScrollViewer Name="MarkdownViewer" Margin="10 7 10 7"/>
             <!-- <TextBlock Name="TextBlock" Margin="10" TextWrapping="Wrap"></TextBlock> -->
             
