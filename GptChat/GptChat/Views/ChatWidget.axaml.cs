@@ -22,7 +22,8 @@ public partial class ChatWidget : UserControl
         ChatSettingsView.IsVisible = false;
         ChatSettingsView.Chat = Chat;
         ChatSettingsView.Update();
-        Chat.Messages.CollectionChanged += ChatsOnCollectionChanged;
+        Chat.Messages.ItemInserted += OnItemInserted;
+        Chat.Messages.ItemRemoved += OnItemRemoved;
         LoadMessages();
         ApplyChanges();
         Chat.Updated += ApplyChanges;
@@ -42,27 +43,21 @@ public partial class ChatWidget : UserControl
         await ChatsService.Instance.LoadMessages(Chat.Id, 100);
     }
 
-    private void ChatsOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    private void OnItemInserted(int index, Message obj)
     {
         Dispatcher.UIThread.Post(() =>
         {
-            if (e.NewItems != null)
-            {
-                foreach (var item in e.NewItems)
-                {
-                    var widget = new Bubble((Message)item);
-                    _bubbles[widget.Message.Id] = widget;
-                    BubblesStackPanel.Children.Add(widget);
-                }
-            }
+            var widget = new Bubble(obj);
+            _bubbles[widget.Message.Id] = widget;
+            BubblesStackPanel.Children.Add(widget);
+        });
+    }
 
-            if (e.OldItems != null)
-            {
-                foreach (var item in e.OldItems)
-                {
-                    BubblesStackPanel.Children.Remove(_bubbles[((Message)item).Id]);
-                }
-            }
+    private void OnItemRemoved(int index, Message obj)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            BubblesStackPanel.Children.Remove(_bubbles[obj.Id]);
         });
     }
 

@@ -2,6 +2,7 @@
 using Core.LocalRepository.Models;
 using Core.RemoteRepository.Models;
 using SQLite;
+using Utils;
 
 namespace Core;
 
@@ -15,7 +16,7 @@ public class Chat : IComparable<Chat>
     public int ContextSize { get; set; }
     public double Temperature { get; set; }
     
-    public ObservableCollection<Message> Messages { get; } = new();
+    public ObservableList<Message> Messages { get; } = new();
     public int? LastLoadedMessage { get; set; } = null;
     
     public DateTime? LastMessageTime { get; set; }
