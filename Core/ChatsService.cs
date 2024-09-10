@@ -18,6 +18,7 @@ public class ChatsService
         AuthService.Instance.UserChanged += OnUserChanged;
         ChatSocketService.Instance.ChatAdded += OnChatAdded;
         ChatSocketService.Instance.ChatUpdated += OnChatUpdated;
+        ChatSocketService.Instance.ChatDeleted += OnChatDeleted;
         ChatSocketService.Instance.MessageAdded += OnMessageAdded;
         ChatSocketService.Instance.MessageDeleted += OnMessageDeleted;
         ChatSocketService.Instance.MessageContentAdded += OnMessageContentAdded;
@@ -89,7 +90,7 @@ public class ChatsService
         }
     }
 
-    public ObservableCollection<Chat> Chats { get; } = new();
+    public ObservableList<Chat> Chats { get; } = new();
 
     public Chat GetChat(Guid chatId)
     {
@@ -126,6 +127,13 @@ public class ChatsService
         _logger.LogDebug($"Updating chat '{chat.Id}'...");
         await _localRepository.SaveChat(chat);
         GetChat(chat.Id).Update(chat);
+    }
+
+    private async void OnChatDeleted(Guid chatId)
+    {
+        _logger.LogDebug($"Deleting chat '{chatId}'...");
+        Chats.Remove(GetChat(chatId));
+        await _localRepository.RemoveChat(chatId);
     }
 
     public async void SaveChat(Chat chat)
@@ -220,6 +228,7 @@ public class ChatsService
         var messages = await _localRepository.GetAllMessages(chatId);
         if (messages.Count > count)
             messages = messages.Slice(messages.Count - count, count);
+        messages.Reverse();
         foreach (var message in messages)
         {
             chat.Messages.Insert(0, message);
@@ -245,10 +254,10 @@ public class ChatsService
         }
         var chats = Chats.ToList();
         chats.Sort();
-        Chats.Clear();
+        // Chats.Clear();
         foreach (var chat in chats)
         {
-            Chats.Insert(0, chat);
+            Chats.MoveItem(chat, 0);
         }
         _logger.LogDebug("Chats sorted...");
     }

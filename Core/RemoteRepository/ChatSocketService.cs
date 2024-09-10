@@ -57,6 +57,13 @@ public class ChatSocketService : SocketService
         {
             ChatUpdated?.Invoke(Chat.FromReadModel(chat));
         });
+        Subscribe<List<Guid>>("delete_chats", chatIds =>
+        {
+            foreach (var chatId in chatIds)
+            {
+                ChatDeleted?.Invoke(chatId);
+            }
+        });
         Subscribe<List<MessageReadModel>>("new_messages", messages =>
         {
             foreach (var message in messages)

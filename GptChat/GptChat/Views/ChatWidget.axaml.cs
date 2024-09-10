@@ -51,7 +51,7 @@ public partial class ChatWidget : UserControl
         {
             var widget = new Bubble(obj);
             _bubbles[widget.Message.Id] = widget;
-            BubblesStackPanel.Children.Add(widget);
+            BubblesStackPanel.Children.Insert(index, widget);
         });
     }
 

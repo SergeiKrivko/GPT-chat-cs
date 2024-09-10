@@ -27,19 +27,7 @@
             </Button>
         </StackPanel>
         <Border Grid.Row="1" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
-            <ListBox Name="ChatsListBox" SelectionChanged="ChatsListBox_OnSelectionChanged" ItemsSource="{Binding Service.Chats}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <!-- <PathIcon Data="{Binding Type.IconPath}" Width="30" Height="30"/> -->
-                            <StackPanel>
-                                <TextBlock Text="{Binding Name}"/>
-                                <!-- <TextBlock Text="{Binding Path}" FontSize="10"/> -->
-                            </StackPanel>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <StackPanel Name="ChatsPanel"></StackPanel>
         </Border>
     </Grid>
 </UserControl>

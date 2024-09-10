@@ -22,6 +22,14 @@ public class ObservableList<T>
 
     public event RemoveHandler? ItemRemoved;
 
+    public delegate void MoveHandler(T obj, int index);
+
+    public event MoveHandler? ItemMoved;
+
+    public delegate void ClearHandler();
+
+    public event ClearHandler? Cleared;
+
     public int Count
     {
         get => _list.Count;
@@ -71,5 +79,31 @@ public class ObservableList<T>
     public bool Contains(T item)
     {
         return _list.Contains(item);
+    }
+
+    public void Clear()
+    {
+        _list.Clear();
+        Cleared?.Invoke();
+    }
+
+    public List<T> ToList()
+    {
+        return new List<T>(_list);
+    }
+
+    public void MoveItem(int index1, int index2)
+    {
+        var item = _list[index1];
+        _list.RemoveAt(index1);
+        _list.Insert(index2, item);
+        ItemMoved?.Invoke(item, index2);
+    }
+    
+    public void MoveItem(T item, int index2)
+    {
+        _list.Remove(item);
+        _list.Insert(index2, item);
+        ItemMoved?.Invoke(item, index2);
     }
 }

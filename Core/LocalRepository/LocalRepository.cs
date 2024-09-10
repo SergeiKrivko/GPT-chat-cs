@@ -71,6 +71,12 @@ public class LocalRepository
         await Chats.Insert(chat.ToLocalModel());
     }
 
+    public async Task RemoveChat(Guid chatId)
+    {
+        var chat = await Chats.Get(t => t.Id == chatId);
+        await Chats.Remove(chat);
+    }
+
     public async Task<Message> GetMessage(Guid id)
     {
         return Message.FromLocalModel(await Messages.Get(t => t.Id == id));

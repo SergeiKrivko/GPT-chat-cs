@@ -1,0 +1,30 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="GptChat.Views.ChatsListItem" HorizontalAlignment="Stretch">
+    <ToggleButton CornerRadius="0" HorizontalAlignment="Stretch" BorderThickness="0" Click="Button_OnClick"
+                  Name="MainButton">
+        <StackPanel Orientation="Horizontal" Margin="5">
+            <StackPanel>
+                <TextBlock Name="ChatNameBlock" FontSize="16" />
+                <!-- <TextBlock Text="{Binding Path}" FontSize="10"/> -->
+            </StackPanel>
+        </StackPanel>
+        <ToggleButton.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Переместить в архив">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{DynamicResource IconArchive}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Удалить" Click="DeleteChat_OnClick">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{DynamicResource IconTrash}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </ContextMenu>
+        </ToggleButton.ContextMenu>
+    </ToggleButton>
+</UserControl>

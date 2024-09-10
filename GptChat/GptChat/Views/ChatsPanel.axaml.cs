@@ -16,7 +16,8 @@ public partial class ChatsPanel : UserControl
     public ChatsPanel()
     {
         InitializeComponent();
-        ChatsService.Instance.Chats.CollectionChanged += ChatsOnCollectionChanged;
+        ChatsService.Instance.Chats.ItemInserted += OnItemInserted;
+        ChatsService.Instance.Chats.ItemRemoved += OnItemRemoved;
         ChatsService.Instance.CurrentChanged += OnCurrentChatChanged;
     }
 
@@ -32,37 +33,27 @@ public partial class ChatsPanel : UserControl
             _widgets[chat.Id].IsVisible = true;
         }
     }
-
-    private void ChatsOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    
+    private void OnItemInserted(int index, Chat obj)
     {
         Dispatcher.UIThread.Post(() =>
         {
-            if (e.NewItems != null)
-            {
-                foreach (var item in e.NewItems)
-                {
-                    var chat = (Chat)item;
-                    if (!_widgets.ContainsKey(chat.Id))
-                    {
-                        var widget = new ChatWidget((Chat)item);
-                        widget.IsVisible = false;
-                        _widgets[widget.Chat.Id] = widget;
-                        Panel.Children.Add(widget);
-                    }
-                }
-            }
+            if (_widgets.ContainsKey(obj.Id))
+                return;
+            var widget = new ChatWidget(obj);
+            widget.IsVisible = false;
+            _widgets[widget.Chat.Id] = widget;
+            Panel.Children.Insert(index, widget);
+        });
+    }
 
-            if (e.OldItems != null)
-            {
-                foreach (var item in e.OldItems)
-                {
-                    var chat = (Chat)item;
-                    if (_widgets.ContainsKey(chat.Id))
-                    {
-                        Panel.Children.Remove(_widgets[((Chat)item).Id]);
-                    }
-                }
-            }
+    private void OnItemRemoved(int index, Chat obj)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (!_widgets.Remove(obj.Id, out var item))
+                return;
+            Panel.Children.Remove(item);
         });
     }
 }
