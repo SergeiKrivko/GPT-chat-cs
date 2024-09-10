@@ -6,14 +6,29 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="GptChat.Views.ChatSettings"
              x:DataType="views:ChatSettings">
-    <StackPanel Margin="10" Spacing="6">
-        <TextBlock Text="Название:"/>
-        <TextBox Name="ChatNameBox"></TextBox>
-        <TextBlock Text="Модель:"/>
-        <ComboBox Name="ChatModelBox" HorizontalAlignment="Stretch">
-            <ComboBoxItem>gpt-3.5</ComboBoxItem>
-            <ComboBoxItem>gpt-4</ComboBoxItem>
-            <ComboBoxItem>gpt-4o</ComboBoxItem>
-        </ComboBox>
-    </StackPanel>
+    <ScrollViewer>
+        <StackPanel Margin="20" Spacing="10">
+            <TextBlock Text="Название:" />
+            <TextBox Name="ChatNameBox"></TextBox>
+
+            <TextBlock Text="Модель:" />
+            <ComboBox Name="ChatModelBox" HorizontalAlignment="Stretch" ItemsSource="{Binding Models}" />
+
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock VerticalAlignment="Center">Размер контекста:</TextBlock>
+                <NumericUpDown Minimum="0" Maximum="20" MinWidth="200" FormatString="0" Name="ContextBox" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock VerticalAlignment="Center">Temperature:</TextBlock>
+                <NumericUpDown Minimum="0" Maximum="1" MinWidth="200" Increment="0.1" FormatString="0.00"
+                               Name="TemperatureBox" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10" Spacing="10">
+                <Button Click="Save_OnClick">Сохранить</Button>
+                <Button Click="Cancel_OnClick">Отменить</Button>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

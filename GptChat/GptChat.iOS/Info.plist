@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDisplayName</key>
-	<string>GptChat</string>
+	<string>GPT-chat</string>
 	<key>CFBundleIdentifier</key>
-	<string>companyName.GptChat</string>
+	<string>com.SergeiKrivko.GPTchat</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
