@@ -45,10 +45,19 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled"
-                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <StackPanel Name="BubblesStackPanel" Spacing="10" Margin="15" />
-                    </ScrollViewer>
+                    <Panel>
+                        <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Name="ScrollViewer"
+                                      ScrollChanged="ScrollViewer_OnScrollChanged">
+                            <StackPanel Name="BubblesStackPanel" Spacing="10" Margin="15" />
+                        </ScrollViewer>
+                        <Canvas HorizontalAlignment="Stretch">
+                            <Button Canvas.Bottom="20" Canvas.Right="20" Width="40" Height="40" CornerRadius="20"
+                                    Click="DownButton_OnClick" Name="DownButton">
+                                <PathIcon Data="{DynamicResource IconDown}"></PathIcon>
+                            </Button>
+                        </Canvas>
+                    </Panel>
                     <Border Grid.Row="1" CornerRadius="15" Background="{DynamicResource SystemRegionBrush}"
                             MinHeight="40" MaxHeight="300" Margin="5">
                         <Grid>

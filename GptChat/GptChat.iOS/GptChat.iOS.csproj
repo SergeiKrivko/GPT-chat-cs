@@ -6,13 +6,14 @@
         <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
         <CodesignKey>Apple Development: sergik.krivko@gmail.com (6T4HKQVC2L)</CodesignKey>
         <Nullable>enable</Nullable>
+        <ProvisioningType>manual</ProvisioningType>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.iOS" Version="$(AvaloniaVersion)"/>
+        <PackageReference Include="Avalonia.iOS" Version="$(AvaloniaVersion)" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\GptChat\GptChat.csproj"/>
+        <ProjectReference Include="..\GptChat\GptChat.csproj" />
     </ItemGroup>
 </Project>

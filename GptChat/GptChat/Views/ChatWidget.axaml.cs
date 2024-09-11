@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -14,7 +15,9 @@ public partial class ChatWidget : UserControl
 {
     public Chat Chat { get; }
     private Dictionary<Guid, Bubble> _bubbles = new();
-    
+    private bool _toBottom = true;
+    private double _offsetFromBottom = 0;
+
     public ChatWidget(Chat chat)
     {
         Chat = chat;
@@ -31,11 +34,7 @@ public partial class ChatWidget : UserControl
 
     private void ApplyChanges()
     {
-        Dispatcher.UIThread.Post(() =>
-        {
-            ChatNameTextBlock.Text = Chat.Name;
-        });
-        
+        Dispatcher.UIThread.Post(() => { ChatNameTextBlock.Text = Chat.Name; });
     }
 
     private async void LoadMessages()
@@ -54,6 +53,14 @@ public partial class ChatWidget : UserControl
             try
             {
                 BubblesStackPanel.Children.Insert(index, widget);
+                if (index == 0 || _toBottom)
+                {
+                    ScrollFromBottom(_offsetFromBottom);
+                }
+                else
+                {
+                    ScrollFromTop(ScrollViewer.Offset.Y);
+                }
             }
             catch (ArgumentOutOfRangeException e)
             {
@@ -65,10 +72,7 @@ public partial class ChatWidget : UserControl
     {
         if (!_bubbles.ContainsKey(obj.Id))
             return;
-        Dispatcher.UIThread.Post(() =>
-        {
-            BubblesStackPanel.Children.Remove(_bubbles[obj.Id]);
-        });
+        Dispatcher.UIThread.Post(() => { BubblesStackPanel.Children.Remove(_bubbles[obj.Id]); });
     }
 
     private void BackButton_OnClick(object? sender, RoutedEventArgs e)
@@ -94,5 +98,29 @@ public partial class ChatWidget : UserControl
             return;
         InputBox.Text = "";
         await ChatsService.Instance.CreateMessage(Chat, "user", text, true);
+    }
+
+    private void ScrollViewer_OnScrollChanged(object? sender, ScrollChangedEventArgs e)
+    {
+        _offsetFromBottom = ScrollViewer.ScrollBarMaximum.Y - ScrollViewer.Offset.Y;
+        _toBottom = _offsetFromBottom <= 20;
+        DownButton.IsVisible = _offsetFromBottom > 100;
+    }
+
+    private async void ScrollFromTop(double offset)
+    {
+        await Task.Delay(100);
+        ScrollViewer.Offset = new Vector(0, offset);
+    }
+
+    private async void ScrollFromBottom(double offset)
+    {
+        await Task.Delay(100);
+        ScrollViewer.Offset = new Vector(0, ScrollViewer.ScrollBarMaximum.Y - offset);
+    }
+
+    private void DownButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        ScrollViewer.Offset = new Vector(0, ScrollViewer.ScrollBarMaximum.Y);
     }
 }

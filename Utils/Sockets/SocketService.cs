@@ -40,12 +40,16 @@ public class SocketService
     {
         Client.On(key, response =>
         {
-            Logger.LogDebug($"Socket '{key}' received");
             var data = response.GetValue<SocketDataModel<T>>();
             if (data != null)
             {
+                Logger.LogDebug($"Socket '{key}' received");
                 TimeUpdated?.Invoke(data.time);
                 handler(data.data);
+            }
+            else
+            {
+                Logger.LogWarning($"Socket '{key}' received with invalid data");
             }
         });
     }
@@ -54,13 +58,17 @@ public class SocketService
     {
         Client.On(key, async response =>
         {
-            Logger.LogDebug($"Socket '{key}' received");
             var data = response.GetValue<SocketDataModel<T>>();
             if (data != null)
             {
+                Logger.LogDebug($"Socket '{key}' received");
                 TimeUpdated?.Invoke(data.time);
                 var callback = handler(data.data);
                 await response.CallbackAsync(callback);
+            }
+            else
+            {
+                Logger.LogWarning($"Socket '{key}' received with invalid data");
             }
         });
     }
