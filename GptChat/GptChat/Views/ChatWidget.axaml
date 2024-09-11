@@ -13,7 +13,9 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Border BorderThickness="0 0 0 1" BorderBrush="Gray" Height="50" HorizontalAlignment="Stretch">
+        <Border BorderThickness="0 0 0 1" 
+                Background="{DynamicResource SystemRegionBrush}" 
+                BorderBrush="Gray" Height="50" HorizontalAlignment="Stretch">
             <Grid Margin="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -38,7 +40,7 @@
             </Grid>
         </Border>
         <Panel Grid.Row="1">
-            <Border Name="MainView" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <Border Name="MainView" Background="Transparent">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -53,7 +55,8 @@
                         </ScrollViewer>
                         <Canvas HorizontalAlignment="Stretch">
                             <Button Canvas.Bottom="20" Canvas.Right="20" Width="40" Height="40" CornerRadius="20"
-                                    Click="DownButton_OnClick" Name="DownButton">
+                                    Click="DownButton_OnClick" Name="DownButton" 
+                                    Background="{DynamicResource ListBackgroundColor}">
                                 <PathIcon Data="{DynamicResource IconDown}"></PathIcon>
                             </Button>
                         </Canvas>

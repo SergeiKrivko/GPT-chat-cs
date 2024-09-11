@@ -6,33 +6,49 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="GptChat.Views.Bubble">
     <Panel>
-        <Border Name="InnerBorder" Background="{DynamicResource ButtonBackgroundPressed}" 
-                MaxWidth="500" CornerRadius="10 10 10 10">
-            <md:MarkdownScrollViewer Name="MarkdownViewer" Margin="10 7 10 7"/>
-            <!-- <TextBlock Name="TextBlock" Margin="10" TextWrapping="Wrap"></TextBlock> -->
-            
+        <Border Name="InnerBorder" MaxWidth="500">
+            <Panel>
+                <Border Name="GptBackground">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0">
+                            <GradientStop Color="{DynamicResource GptBubbleStartColor}" />
+                            <GradientStop Color="{DynamicResource GptBubbleStopColor}" Offset="1,1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
+                <Border Name="UserBackground">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0">
+                            <GradientStop Color="{DynamicResource UserBubbleStartColor}" />
+                            <GradientStop Color="{DynamicResource UserBubbleStopColor}" Offset="1,1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
+                <md:MarkdownScrollViewer Name="MarkdownViewer" Margin="10 7 10 7" />
+            </Panel>
+
             <Border.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Ответить">
                         <MenuItem.Icon>
-                            <PathIcon Data="{DynamicResource IconReply}"/>
+                            <PathIcon Data="{DynamicResource IconReply}" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <Separator/>
+                    <Separator />
                     <MenuItem Header="Копировать как текст" Click="CopyText_OnClick">
                         <MenuItem.Icon>
-                            <PathIcon Data="{DynamicResource IconCopy}"/>
+                            <PathIcon Data="{DynamicResource IconCopy}" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="Копировать как markdown" Click="CopyText_OnClick">
                         <MenuItem.Icon>
-                            <PathIcon Data="{DynamicResource IconCopyMd}"/>
+                            <PathIcon Data="{DynamicResource IconCopyMd}" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <Separator/>
+                    <Separator />
                     <MenuItem Header="Удалить" Click="DeleteMessage_OnClick">
                         <MenuItem.Icon>
-                            <PathIcon Data="{DynamicResource IconTrash}"/>
+                            <PathIcon Data="{DynamicResource IconTrash}" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>

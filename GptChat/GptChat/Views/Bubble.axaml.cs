@@ -33,9 +33,10 @@ public partial class Bubble : UserControl
         InnerBorder.CornerRadius = new CornerRadius(10, 10,
             Message.Role == "user" ? 0 : 10,
             Message.Role == "user" ? 10 : 0);
-        // TextBlock.Text = Message?.Content;
-        InnerBorder.Bind(Border.BackgroundProperty,
-            Resources.GetResourceObservable(Message.Role == "user" ? "ToggleButtonBackgroundChecked" : "ButtonBackgroundPressed"));
+        GptBackground.CornerRadius = InnerBorder.CornerRadius;
+        UserBackground.CornerRadius = InnerBorder.CornerRadius;
+        UserBackground.IsVisible = Message.Role == "user";
+        GptBackground.IsVisible = Message.Role != "user";
         MarkdownViewer.Markdown = Message.Content;
     }
 

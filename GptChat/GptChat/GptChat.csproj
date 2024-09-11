@@ -12,6 +12,7 @@
 
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)"/>
+        <PackageReference Include="Avalonia.Svg" Version="11.0.0.19" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)"/>
         <PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)"/>
         <PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)"/>
@@ -24,5 +25,39 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Auth\Auth.csproj" />
       <ProjectReference Include="..\..\Core\Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-1.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-10.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-11.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-12.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-13.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-14.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-15.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-16.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-17.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-18.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-19.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-2.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-20.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-21.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-22.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-23.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-24.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-25.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-26.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-27.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-28.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-29.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-3.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-30.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-31.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-4.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-5.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-6.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-7.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-8.svg" />
+      <UpToDateCheckInput Remove="Assets\wallpapers\pattern-9.svg" />
     </ItemGroup>
 </Project>
