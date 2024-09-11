@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
@@ -91,7 +92,12 @@ public partial class ChatWidget : UserControl
         }
     }
 
-    private async void SendButton_OnClick(object? sender, RoutedEventArgs e)
+    private void SendButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Send();
+    }
+
+    private async void Send()
     {
         var text = InputBox.Text;
         if (String.IsNullOrEmpty(text))
@@ -122,5 +128,21 @@ public partial class ChatWidget : UserControl
     private void DownButton_OnClick(object? sender, RoutedEventArgs e)
     {
         ScrollViewer.Offset = new Vector(0, ScrollViewer.ScrollBarMaximum.Y);
+    }
+
+    private void InputBox_OnKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Return)
+        {
+            if ((e.KeyModifiers & KeyModifiers.Shift) != 0)
+            {
+                InputBox.Text = InputBox.Text?.Insert(InputBox.CaretIndex, "\n");
+                InputBox.CaretIndex += 1;
+            }
+            else
+            {
+                Send();
+            }
+        }
     }
 }
