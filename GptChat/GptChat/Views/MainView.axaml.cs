@@ -8,7 +8,7 @@ namespace GptChat.Views;
 
 public partial class MainView : UserControl
 {
-    private readonly int _max2ColumnWidth = 500;
+    private readonly int _max2ColumnWidth = 750;
     private bool _twoColumn = true;
     
     public MainView()

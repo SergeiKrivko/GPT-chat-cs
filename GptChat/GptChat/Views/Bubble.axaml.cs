@@ -1,18 +1,20 @@
-﻿using Avalonia;
+﻿using System;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
-using Avalonia.Markup.Xaml;
-using Avalonia.Markup.Xaml.MarkupExtensions;
-using Avalonia.Media;
 using Avalonia.Threading;
 using Core;
+using Core.RemoteRepository;
+using Utils.Http.Exceptions;
 
 namespace GptChat.Views;
 
 public partial class Bubble : UserControl
 {
     public Message Message { get; }
+    private string? _originalLang = null;
+    private string? _lang = null;
 
     public Bubble(Message message)
     {
@@ -52,5 +54,75 @@ public partial class Bubble : UserControl
     private async void DeleteMessage_OnClick(object? sender, RoutedEventArgs e)
     {
         await ChatsService.Instance.DeleteMessage(Message.Id);
+    }
+
+    private async void Translate(string dst)
+    {
+        try
+        {
+            var res = await TranslateHttpService.Instance.Translate(Message.Content, dst);
+            MarkdownViewer.Markdown = res.res;
+            TranslatedWidget.IsVisible = true;
+            TranslatedFromBlock.Text = $"Переведено с {res.src}";
+            _lang = res.dst;
+        }
+        catch (HttpServiceException e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+    private void TranslateToRussianItem_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Translate("rus");
+    }
+
+    private void TranslateToFrench_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Translate("fra");
+    }
+
+    private void TranslateToGerman_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Translate("eng");
+    }
+
+    private void TranslateToSpanish_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Translate("esp");
+    }
+
+    private void TranslateToItalian_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Translate("ita");
+    }
+
+    private void TranslateToEnglish_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Translate("eng");
+    }
+
+    private async void MenuBase_OnOpened(object? sender, RoutedEventArgs e)
+    {
+        TranslateToRussianItem.IsVisible = false;
+        if (_originalLang == null)
+        {
+            try
+            {
+                _lang = await TranslateHttpService.Instance.DetectLang(Message.Content);
+                _originalLang = _lang;
+            }
+            catch (HttpServiceException exception)
+            {
+                Console.WriteLine(exception);
+            }
+        }
+        TranslateToRussianItem.IsVisible = _lang != "rus";
+    }
+
+    private void ShowOriginal_OnClick(object? sender, RoutedEventArgs e)
+    {
+        MarkdownViewer.Markdown = Message.Content;
+        _lang = _originalLang;
+        TranslatedWidget.IsVisible = false;
     }
 }

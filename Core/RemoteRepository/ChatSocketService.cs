@@ -53,10 +53,7 @@ public class ChatSocketService : SocketService
                 ChatAdded?.Invoke(Chat.FromReadModel(chat));
             }
         });
-        Subscribe<ChatReadModel>("update_chat", chat =>
-        {
-            ChatUpdated?.Invoke(Chat.FromReadModel(chat));
-        });
+        Subscribe<ChatReadModel>("update_chat", chat => { ChatUpdated?.Invoke(Chat.FromReadModel(chat)); });
         Subscribe<List<Guid>>("delete_chats", chatIds =>
         {
             foreach (var chatId in chatIds)
@@ -78,24 +75,25 @@ public class ChatSocketService : SocketService
                 MessageDeleted?.Invoke(message);
             }
         });
-        Subscribe<MessageAddContentModel>("message_add_content", data =>
-        {
-            MessageContentAdded?.Invoke(data.chat, data.uuid, data.content);
-        });
+        Subscribe<MessageAddContentModel>("message_add_content",
+            data => { MessageContentAdded?.Invoke(data.chat, data.uuid, data.content); });
         Subscribe<UpdatesModel>("updates", data =>
         {
             foreach (var chat in data.new_chats)
             {
                 ChatAdded?.Invoke(Chat.FromReadModel(chat));
             }
+
             foreach (var chat in data.deleted_chats)
             {
                 ChatDeleted?.Invoke(Chat.FromReadModel(chat).Id);
             }
+
             foreach (var message in data.new_messages)
             {
                 MessageAdded?.Invoke(Message.FromReadModel(message));
             }
+
             foreach (var message in data.deleted_messages)
             {
                 MessageDeleted?.Invoke(Message.FromReadModel(message).Id);
@@ -128,30 +126,55 @@ public class ChatSocketService : SocketService
     private async void RequestUpdates()
     {
         _updatesLoaded = false;
-        await Emit("request_updates",
+        await Emit<UpdatesModel>("request_updates", data =>
+            {
+                foreach (var chat in data.new_chats)
+                {
+                    ChatAdded?.Invoke(Chat.FromReadModel(chat));
+                }
+
+                foreach (var chat in data.deleted_chats)
+                {
+                    ChatDeleted?.Invoke(Chat.FromReadModel(chat).Id);
+                }
+
+                foreach (var message in data.new_messages)
+                {
+                    MessageAdded?.Invoke(Message.FromReadModel(message));
+                }
+
+                foreach (var message in data.deleted_messages)
+                {
+                    MessageDeleted?.Invoke(Message.FromReadModel(message).Id);
+                }
+
+                _updatesLoaded = true;
+                if (_lastRequestTime != null)
+                    OnTimeUpdated(_lastRequestTime.Value);
+            },
             SettingsService.Instance.Get<DateTime>($"{AuthService.Instance.User?.Id}-timestamp"));
     }
-    
+
     public async Task CreateChat()
     {
         await Emit("new_chat");
     }
-    
+
     public async Task DeleteChat(Guid chatId)
     {
         await Emit("delete_chat", chatId);
     }
-    
+
     public async Task UpdateChat(Guid id, ChatUpdateModel chat)
     {
         await Emit("update_chat", id, chat);
     }
-    
+
     public async Task CreateMessage(MessageCreateModel model, bool prompt)
     {
         await Emit("new_message", model, prompt);
     }
-    
+
     public async Task DeleteMessage(Guid messageId)
     {
         await Emit("delete_message", messageId);

@@ -54,7 +54,6 @@ public partial class WallpaperWidget : UserControl
     private static string WallPapers(string name, Size size, string color)
     {
         color = color.Replace("#ff", "#");
-        Console.WriteLine($"Color = {color}");
         var loader = AssetLoader.Open(new Uri($"avares://GptChat/Assets/wallpapers/{name}.svg"));
         var text = new StreamReader(loader).ReadToEnd();
 

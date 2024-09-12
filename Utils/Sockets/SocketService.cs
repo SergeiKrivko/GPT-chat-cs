@@ -83,4 +83,20 @@ public class SocketService
         Logger.LogDebug($"Socket '{key}' emitted");
         await Client.EmitAsync(key, data);
     }
+
+    public async Task Emit<T>(string key, Handler<T> handler, params object[] data)
+    {
+        if (!Client.Connected)
+        {
+            Logger.LogWarning($"Not connected: failed to emit '{key}'");
+            return;
+        }
+        Logger.LogDebug($"Socket '{key}' emitted");
+        await Client.EmitAsync(key, response =>
+        {
+            Logger.LogDebug($"Response to socket '{key}' received");
+            var resp = response.GetValue<T>();
+            handler(resp);
+        }, data);
+    }
 }

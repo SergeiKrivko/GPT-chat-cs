@@ -12,7 +12,7 @@
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0">
                             <GradientStop Color="{DynamicResource GptBubbleStartColor}" />
-                            <GradientStop Color="{DynamicResource GptBubbleStopColor}" Offset="1,1"/>
+                            <GradientStop Color="{DynamicResource GptBubbleStopColor}" Offset="1,1" />
                         </LinearGradientBrush>
                     </Border.Background>
                 </Border>
@@ -20,15 +20,27 @@
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0">
                             <GradientStop Color="{DynamicResource UserBubbleStartColor}" />
-                            <GradientStop Color="{DynamicResource UserBubbleStopColor}" Offset="1,1"/>
+                            <GradientStop Color="{DynamicResource UserBubbleStopColor}" Offset="1,1" />
                         </LinearGradientBrush>
                     </Border.Background>
                 </Border>
-                <md:MarkdownScrollViewer Name="MarkdownViewer" Margin="10 7 10 7" />
+                
+                <StackPanel Margin="10 7 10 7" Spacing="7">
+                    <Grid Name="TranslatedWidget" IsVisible="False">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                    
+                        <TextBlock Name="TranslatedFromBlock" VerticalAlignment="Center"/>
+                        <Button Grid.Column="1" Click="ShowOriginal_OnClick">Показать оригинал</Button>
+                    </Grid>
+                    <md:MarkdownScrollViewer Name="MarkdownViewer" />
+                </StackPanel>
             </Panel>
 
             <Border.ContextMenu>
-                <ContextMenu>
+                <ContextMenu Opened="MenuBase_OnOpened">
                     <MenuItem Header="Ответить">
                         <MenuItem.Icon>
                             <PathIcon Data="{DynamicResource IconReply}" />
@@ -50,6 +62,16 @@
                         <MenuItem.Icon>
                             <PathIcon Data="{DynamicResource IconTrash}" />
                         </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="Перевести на русский" Name="TranslateToRussianItem" Click="TranslateToRussianItem_OnClick" />
+                    <MenuItem Header="Перевести на..." Name="TranslateItem">
+                        <MenuItem Click="TranslateToEnglish_OnClick" Header="Английский"/>
+                        <MenuItem Click="TranslateToRussianItem_OnClick" Header="Русский"/>
+                        <MenuItem Click="TranslateToFrench_OnClick" Header="Французский"/>
+                        <MenuItem Click="TranslateToGerman_OnClick" Header="Немецкий"/>
+                        <MenuItem Click="TranslateToSpanish_OnClick" Header="Испанский"/>
+                        <MenuItem Click="TranslateToItalian_OnClick" Header="Итальянский"/>
                     </MenuItem>
                 </ContextMenu>
             </Border.ContextMenu>
