@@ -53,6 +53,10 @@
                                       ScrollChanged="ScrollViewer_OnScrollChanged">
                             <StackPanel Name="BubblesStackPanel" Spacing="10" Margin="15" />
                         </ScrollViewer>
+                        <Border CornerRadius="10" Background="{DynamicResource SystemRegionBrush}"
+                                Margin="10" VerticalAlignment="Top" IsVisible="False" Name="ErrorBox">
+                            <TextBlock Name="ErrorTextBlock"/>
+                        </Border>
                         <Canvas HorizontalAlignment="Stretch">
                             <Button Canvas.Bottom="20" Canvas.Right="20" Width="40" Height="40" CornerRadius="20"
                                     Click="DownButton_OnClick" Name="DownButton" 

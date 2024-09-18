@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SocketIOClient;
 using SocketIOClient.Transport;
 
@@ -95,8 +94,9 @@ public class SocketService
         await Client.EmitAsync(key, response =>
         {
             Logger.LogDebug($"Response to socket '{key}' received");
-            var resp = response.GetValue<T>();
-            handler(resp);
+            var resp = response.GetValue<SocketDataModel<T>>();
+            TimeUpdated?.Invoke(resp.time);
+            handler(resp.data);
         }, data);
     }
 }
