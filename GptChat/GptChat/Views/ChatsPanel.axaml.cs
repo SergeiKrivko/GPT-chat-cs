@@ -25,7 +25,11 @@ public partial class ChatsPanel : UserControl
     {
         foreach (var item in _widgets.Values)
         {
-            item.IsVisible = false;
+            if (item.IsVisible)
+            {
+                item.Unload();
+                item.IsVisible = false;
+            }
         }
         Placeholder.IsVisible = chat?.Id == null;
         if (chat?.Id != null)

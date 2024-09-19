@@ -9,7 +9,7 @@ public class LocalRepository
 {
     private static LocalRepository? _instance;
     private SQLiteAsyncConnection? _database;
-    
+
     private Repository<ChatLocalModel> Chats { get; set; }
     private Repository<MessageLocalModel> Messages { get; set; }
 
@@ -26,7 +26,7 @@ public class LocalRepository
     {
         if (_database != null)
             await _database.CloseAsync();
-        
+
         var path = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SergeiKrivko",
             Config.AppName);
         if (AuthService.Instance.User == null)
@@ -37,6 +37,7 @@ public class LocalRepository
         {
             path = Path.Join(path, "Users", AuthService.Instance.User.Id);
         }
+
         Directory.CreateDirectory(path);
         path = Path.Join(path, "Database.db");
         _database = new SQLiteAsyncConnection(path, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
@@ -85,11 +86,35 @@ public class LocalRepository
     public async Task<List<Message>> GetAllMessages(Guid chatId)
     {
         var res = new List<Message>();
-        foreach (var model in await Messages.GetAll(m => m.ChatId == chatId, t => t.CreatedAt))
+        foreach (var model in await Messages.GetAll(m => m.ChatId == chatId && m.DeletedAt == null, t => t.CreatedAt))
         {
             res.Add(Message.FromLocalModel(model));
         }
 
+        return res;
+    }
+
+    public async Task<List<Message>> GetAllMessagesBefore(Guid chatId, Guid messageId)
+    {
+        // var beforeMessage = await Messages.Get(t => t.Id == messageId);
+        Message? beforeMessage = null;
+        try
+        {
+            beforeMessage = await GetMessage(messageId);
+        }
+        catch (KeyNotFoundException)
+        {
+        }
+
+        var res = new List<Message>();
+        foreach (var model in await Messages.GetAll(m => m.ChatId == chatId && m.DeletedAt == null,
+                     t => t.CreatedAt))
+        {
+            res.Add(Message.FromLocalModel(model));
+        }
+        
+        if (beforeMessage != null)
+            res = res.FindAll(m => m.CreatedAt < beforeMessage.CreatedAt);
         return res;
     }
 

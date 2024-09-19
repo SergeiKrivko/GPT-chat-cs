@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using Core;
 
@@ -17,7 +15,9 @@ public partial class ChatWidget : UserControl
     public Chat Chat { get; }
     private Dictionary<Guid, Bubble> _bubbles = new();
     private bool _toBottom = true;
-    private double _offsetFromBottom = 0;
+    private double _offsetFromBottom;
+    private bool _loading;
+    private bool _inited;
 
     public ChatWidget(Chat chat)
     {
@@ -40,7 +40,12 @@ public partial class ChatWidget : UserControl
 
     private async void LoadMessages()
     {
-        await ChatsService.Instance.LoadMessages(Chat.Id, 100);
+        if (_loading)
+            return;
+        _loading = true;
+        await ChatsService.Instance.LoadMessages(Chat.Id, 5);
+        await Task.Delay(500);
+        _loading = false;
     }
 
     private void OnItemInserted(int index, Message obj)
@@ -63,7 +68,7 @@ public partial class ChatWidget : UserControl
                     ScrollFromTop(ScrollViewer.Offset.Y);
                 }
             }
-            catch (ArgumentOutOfRangeException e)
+            catch (ArgumentOutOfRangeException)
             {
             }
         });
@@ -73,7 +78,11 @@ public partial class ChatWidget : UserControl
     {
         if (!_bubbles.ContainsKey(obj.Id))
             return;
-        Dispatcher.UIThread.Post(() => { BubblesStackPanel.Children.Remove(_bubbles[obj.Id]); });
+        Dispatcher.UIThread.Post(() =>
+        {
+            BubblesStackPanel.Children.Remove(_bubbles[obj.Id]);
+            _bubbles.Remove(obj.Id);
+        });
     }
 
     private void BackButton_OnClick(object? sender, RoutedEventArgs e)
@@ -108,20 +117,28 @@ public partial class ChatWidget : UserControl
 
     private void ScrollViewer_OnScrollChanged(object? sender, ScrollChangedEventArgs e)
     {
-        _offsetFromBottom = ScrollViewer.ScrollBarMaximum.Y - ScrollViewer.Offset.Y;
-        _toBottom = _offsetFromBottom <= 20;
-        DownButton.IsVisible = _offsetFromBottom > 100;
+        if (!_loading)
+        {
+            _offsetFromBottom = ScrollViewer.ScrollBarMaximum.Y - ScrollViewer.Offset.Y;
+            _toBottom = _offsetFromBottom <= 20;
+            DownButton.IsVisible = _offsetFromBottom > 100;
+        }
+
+        if (ScrollViewer.Offset.Y < 100)
+        {
+            LoadMessages();
+        }
     }
 
     private async void ScrollFromTop(double offset)
     {
-        await Task.Delay(100);
+        await Task.Delay(10);
         ScrollViewer.Offset = new Vector(0, offset);
     }
 
     private async void ScrollFromBottom(double offset)
     {
-        await Task.Delay(100);
+        await Task.Delay(10);
         ScrollViewer.Offset = new Vector(0, ScrollViewer.ScrollBarMaximum.Y - offset);
     }
 
@@ -144,5 +161,18 @@ public partial class ChatWidget : UserControl
                 Send();
             }
         }
+    }
+
+    private void Control_OnSizeChanged(object? sender, SizeChangedEventArgs e)
+    {
+        if (!_inited)
+            ScrollViewer.Offset = new Vector(0, ScrollViewer.ScrollBarMaximum.Y);
+        _inited = true;
+    }
+
+    public void Unload()
+    {
+        ChatsService.Instance.UnloadMessages(Chat);
+        ScrollFromBottom(0);
     }
 }

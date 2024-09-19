@@ -5,7 +5,8 @@
              xmlns:views="clr-namespace:GptChat.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="GptChat.Views.ChatWidget"
-             x:DataType="views:ChatWidget">
+             x:DataType="views:ChatWidget"
+             SizeChanged="Control_OnSizeChanged">
 
     <Grid>
         <Grid.RowDefinitions>

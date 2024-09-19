@@ -232,14 +232,35 @@ public class ChatsService
     {
         _logger.LogDebug($"Load messages to chat '{chatId}' from local repository...");
         var chat = GetChat(chatId);
-        var messages = await _localRepository.GetAllMessages(chatId);
+        
+        List<Message> messages;
+        if (chat.LastLoadedMessage == null)
+            messages = await _localRepository.GetAllMessages(chatId);
+        else
+            messages = await _localRepository.GetAllMessagesBefore(chatId, chat.LastLoadedMessage.Value);
+        _logger.LogDebug($"Found {messages.Count} messages");
+        
         if (messages.Count > count)
             messages = messages.Slice(messages.Count - count, count);
         messages.Reverse();
+        _logger.LogDebug($"Adding {messages.Count} messages");
         foreach (var message in messages)
         {
             chat.Messages.Insert(0, message);
+            chat.LastLoadedMessage = message.Id;
         }
+    }
+
+    public void UnloadMessages(Chat chat)
+    {
+        var len = chat.Messages.Count - 5;
+        for (var i = 0; i < len; i++)
+        {
+            chat.Messages.Pop(0);
+        }
+
+        chat.LastLoadedMessage = chat.Messages[0].Id;
+        _logger.LogDebug($"Unload messages from '{chat.Name}' until = {chat.LastLoadedMessage}");
     }
 
     private async Task<DateTime> GetChatLastMessageTime(Chat chat)
