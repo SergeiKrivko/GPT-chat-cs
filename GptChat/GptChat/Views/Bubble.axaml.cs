@@ -17,6 +17,11 @@ public partial class Bubble : UserControl
     private string? _originalLang = null;
     private string? _lang = null;
 
+    public double MaxBubbleWidth
+    {
+        set => InnerBorder.MaxWidth = value;
+    }
+
     public Bubble(Message message)
     {
         Message = message;

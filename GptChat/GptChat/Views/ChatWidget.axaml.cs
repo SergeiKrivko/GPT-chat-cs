@@ -89,6 +89,8 @@ public partial class ChatWidget : UserControl
             return;
         Dispatcher.UIThread.Post(() =>
         {
+            if (!_bubbles.ContainsKey(obj.Id))
+                return;
             BubblesStackPanel.Children.Remove(_bubbles[obj.Id]);
             _bubbles[obj.Id].ReplyClicked -= AddReply;
             _bubbles.Remove(obj.Id);
@@ -179,8 +181,15 @@ public partial class ChatWidget : UserControl
     private void Control_OnSizeChanged(object? sender, SizeChangedEventArgs e)
     {
         if (!_inited)
+        {
             ScrollViewer.Offset = new Vector(0, ScrollViewer.ScrollBarMaximum.Y);
-        _inited = true;
+            _inited = true;
+        }
+
+        foreach (var bubble in _bubbles.Values)
+        {
+            bubble.MaxBubbleWidth = e.NewSize.Width * 0.7;
+        }
     }
 
     public void Unload()
