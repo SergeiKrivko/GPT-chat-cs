@@ -15,12 +15,13 @@
             <views:WallpaperWidget />
         </Border>
         <StackPanel Margin="20" Spacing="10">
-            <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                <TextBlock Name="UsernameBlock"/>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <PathIcon Data="{DynamicResource IconUser}"></PathIcon>
+                <TextBlock Name="UsernameBlock" VerticalAlignment="Center"/>
                 <Button Click="SignOutButton_OnClick">Выйти</Button>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                <TextBlock>Обои:</TextBlock>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock VerticalAlignment="Center">Обои:</TextBlock>
                 <ComboBox Name="WallpapersBox" ItemsSource="{Binding Wallpapers}" SelectionChanged="WallpapersBox_OnSelectionChanged">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>

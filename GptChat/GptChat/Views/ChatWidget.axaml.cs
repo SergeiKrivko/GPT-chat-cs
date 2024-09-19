@@ -30,6 +30,7 @@ public partial class ChatWidget : UserControl
         LoadMessages();
         ApplyChanges();
         Chat.Updated += ApplyChanges;
+        InputBox.Text = "";
         
         ChatSettings.GetModels();
     }
@@ -196,5 +197,17 @@ public partial class ChatWidget : UserControl
     {
         ChatsService.Instance.UnloadMessages(Chat);
         ScrollFromBottom(0);
+    }
+
+    private async void InputBox_OnPastingFromClipboard(object? sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+        var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+        if (clipboard != null)
+        {
+            var text = await clipboard.GetTextAsync() ?? "";
+            InputBox.Text = InputBox.Text?.Insert(InputBox.CaretIndex, text);
+            InputBox.CaretIndex += text.Length;
+        }
     }
 }

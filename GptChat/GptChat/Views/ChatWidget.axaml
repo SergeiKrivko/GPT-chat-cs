@@ -80,8 +80,8 @@
 
                         <views:ReplyList Grid.ColumnSpan="2" Name="ReplyList" />
 
-                        <TextBox Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" Margin="5" AcceptsReturn="True"
-                                 KeyDown="InputBox_OnKeyDown"
+                        <TextBox Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" Margin="5" AcceptsReturn="False"
+                                 KeyDown="InputBox_OnKeyDown" PastingFromClipboard="InputBox_OnPastingFromClipboard"
                                  BorderThickness="0" Watermark="Message..." Classes="ChatInput" Name="InputBox" />
                         <Button Grid.Row="1" Grid.Column="1" Width="30" Height="30" Margin="0 5 5 5"
                                 Background="Transparent" Click="SendButton_OnClick">
