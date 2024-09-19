@@ -10,5 +10,5 @@ public class ChatLocalModel
     public string Name { get; set; }
     public string? Model { get; set; }
     public int ContextSize { get; set; }
-    public double Temperature { get; set; }
+    public decimal Temperature { get; set; }
 }

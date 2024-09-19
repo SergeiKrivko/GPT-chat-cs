@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using Core;
+using GptChat.Windows;
 
 namespace GptChat.Views;
 
@@ -71,5 +73,15 @@ public partial class ChatsList : UserControl
     private async void CreateChatButton_OnClick(object? sender, RoutedEventArgs e)
     {
         await ChatsService.Instance.CreateChat();
+    }
+
+    private async void SettingsButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var dialog = new AppSettings();
+        
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && desktop.MainWindow != null)
+        {
+            await dialog.ShowDialog(desktop.MainWindow);
+        }
     }
 }

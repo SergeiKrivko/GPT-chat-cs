@@ -33,15 +33,15 @@
                     <ToggleButton Width="40" Height="40" Background="Transparent">
                         <PathIcon Data="{DynamicResource IconSearch}"></PathIcon>
                     </ToggleButton>
-                    <ToggleButton Width="40" Height="40" Background="Transparent" Name="SettingsButton"
-                                  IsCheckedChanged="SettingsButton_OnIsCheckedChanged">
+                    <Button Width="40" Height="40" Background="Transparent" Name="SettingsButton"
+                                  Click="SettingsButton_OnClick">
                         <PathIcon Data="{DynamicResource IconOptions}"></PathIcon>
-                    </ToggleButton>
+                    </Button>
                 </StackPanel>
             </Grid>
         </Border>
         <Panel Grid.Row="1">
-            <Border Name="MainView" Background="Transparent">
+            <Border Background="Transparent">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -84,7 +84,6 @@
                     </Border>
                 </Grid>
             </Border>
-            <views:ChatSettings Name="ChatSettingsView"></views:ChatSettings>
         </Panel>
     </Grid>
 </UserControl>

@@ -22,7 +22,7 @@
             <!-- <Button Width="40" Height="40" Background="Transparent"> -->
             <!--     <PathIcon Data="{DynamicResource IconUser}"/> -->
             <!-- </Button> -->
-            <Button Width="40" Height="40" Background="Transparent">
+            <Button Width="40" Height="40" Background="Transparent" Click="SettingsButton_OnClick">
                 <PathIcon Data="{DynamicResource IconSettings}"></PathIcon>
             </Button>
         </StackPanel>

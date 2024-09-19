@@ -166,6 +166,11 @@ public class AuthService : HttpService
         _logger.LogInformation("Token was refreshed successfully");
         Refreshed = true;
     }
+
+    public void SignOut()
+    {
+        User = null;
+    }
 }
 
 public class SignInRequestBody

@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Core;
 using Core.RemoteRepository;
-using Utils.Http.Exceptions;
+using SocketIOClient;
 
-namespace GptChat.Views;
+namespace GptChat.Windows;
 
-public partial class ChatSettings : UserControl
+public partial class ChatSettings : Window
 {
     public Chat? Chat { get; set; }
     private List<string> Models { get; } = new();
@@ -55,13 +54,13 @@ public partial class ChatSettings : UserControl
         flag |= Chat.Name != ChatNameBox.Text;
         flag |= Chat.Model != (string?)ChatModelBox.SelectedValue;
         flag |= Chat.ContextSize != ContextBox.Value;
-        flag |= Chat.Temperature != (double?)TemperatureBox.Value;
+        flag |= Chat.Temperature != TemperatureBox.Value;
         if (flag)
         {
             Chat.Name = ChatNameBox.Text ?? "";
             Chat.Model = (string?)ChatModelBox.SelectedValue;
             Chat.ContextSize = (int?)ContextBox.Value ?? 0;
-            Chat.Temperature = (double?)TemperatureBox.Value ?? 0.5;
+            Chat.Temperature = TemperatureBox.Value ?? (decimal)0.5;
             ChatsService.Instance.SaveChat(Chat);
         }
     }
@@ -69,10 +68,12 @@ public partial class ChatSettings : UserControl
     private void Save_OnClick(object? sender, RoutedEventArgs e)
     {
         Save();
+        Close();
     }
 
     private void Cancel_OnClick(object? sender, RoutedEventArgs e)
     {
-        Update();
+        // Update();
+        Close();
     }
 }

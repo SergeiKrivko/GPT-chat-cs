@@ -14,7 +14,7 @@ public class Chat : IComparable<Chat>
     public string Name { get; set; }
     public string? Model { get; set; }
     public int ContextSize { get; set; }
-    public double Temperature { get; set; }
+    public decimal Temperature { get; set; }
     
     public ObservableList<Message> Messages { get; } = new();
     public Guid? LastLoadedMessage { get; set; } = null;

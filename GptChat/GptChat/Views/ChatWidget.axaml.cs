@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Core;
+using GptChat.Windows;
 
 namespace GptChat.Views;
 
@@ -23,9 +25,6 @@ public partial class ChatWidget : UserControl
     {
         Chat = chat;
         InitializeComponent();
-        ChatSettingsView.IsVisible = false;
-        ChatSettingsView.Chat = Chat;
-        ChatSettingsView.Update();
         Chat.Messages.ItemInserted += OnItemInserted;
         Chat.Messages.ItemRemoved += OnItemRemoved;
         LoadMessages();
@@ -88,16 +87,18 @@ public partial class ChatWidget : UserControl
     private void BackButton_OnClick(object? sender, RoutedEventArgs e)
     {
         ChatsService.Instance.Current = null;
-        SettingsButton.IsChecked = false;
     }
 
-    private void SettingsButton_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
+    private async void SettingsButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        MainView.IsVisible = SettingsButton.IsChecked == false;
-        ChatSettingsView.IsVisible = SettingsButton.IsChecked != false;
-        if (SettingsButton.IsChecked == false)
+        var dialog = new ChatSettings();
+        
+        dialog.Chat = Chat;
+        dialog.Update();
+        
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && desktop.MainWindow != null)
         {
-            ChatSettingsView.Save();
+            await dialog.ShowDialog(desktop.MainWindow);
         }
     }
 
