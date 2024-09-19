@@ -12,6 +12,7 @@ public class LocalRepository
 
     private Repository<ChatLocalModel> Chats { get; set; }
     private Repository<MessageLocalModel> Messages { get; set; }
+    private Repository<ReplyLocalModel> Replys { get; set; }
 
     public static LocalRepository Instance
     {
@@ -44,6 +45,7 @@ public class LocalRepository
 
         Chats = new Repository<ChatLocalModel>(_database);
         Messages = new Repository<MessageLocalModel>(_database);
+        Replys = new Repository<ReplyLocalModel>(_database);
     }
 
     public async Task<Chat> GetChat(Guid id)
@@ -80,7 +82,9 @@ public class LocalRepository
 
     public async Task<Message> GetMessage(Guid id)
     {
-        return Message.FromLocalModel(await Messages.Get(t => t.Id == id));
+        var mes = Message.FromLocalModel(await Messages.Get(t => t.Id == id));
+        mes.Reply = await GetReply(id);
+        return mes;
     }
 
     public async Task<List<Message>> GetAllMessages(Guid chatId)
@@ -88,7 +92,9 @@ public class LocalRepository
         var res = new List<Message>();
         foreach (var model in await Messages.GetAll(m => m.ChatId == chatId && m.DeletedAt == null, t => t.CreatedAt))
         {
-            res.Add(Message.FromLocalModel(model));
+            var mes = Message.FromLocalModel(model);
+            mes.Reply = await GetReply(mes.Id);
+            res.Add(mes);
         }
 
         return res;
@@ -110,11 +116,25 @@ public class LocalRepository
         foreach (var model in await Messages.GetAll(m => m.ChatId == chatId && m.DeletedAt == null,
                      t => t.CreatedAt))
         {
-            res.Add(Message.FromLocalModel(model));
+            var mes = Message.FromLocalModel(model);
+            mes.Reply = await GetReply(mes.Id);
+            res.Add(mes);
         }
         
         if (beforeMessage != null)
             res = res.FindAll(m => m.CreatedAt < beforeMessage.CreatedAt);
+        return res;
+    }
+
+    private async Task<List<Reply>> GetReply(Guid messageId)
+    {
+        var replys = await Replys.GetAll(r => r.MessageId == messageId);
+        var res = new List<Reply>();
+        foreach (var reply in replys)
+        {
+            res.Add(Reply.FromLocalModel(reply));
+        }
+
         return res;
     }
 
@@ -126,6 +146,10 @@ public class LocalRepository
     public async Task InsertMessage(Message message)
     {
         await Messages.Insert(message.ToLocalModel());
+        foreach (var reply in message.Reply)
+        {
+            await Replys.Insert(reply.ToLocalModel());
+        }
     }
 
     public async Task RemoveMessage(Guid messageId)

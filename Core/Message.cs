@@ -1,6 +1,5 @@
 ﻿using Core.LocalRepository.Models;
 using Core.RemoteRepository.Models;
-using SQLite;
 
 namespace Core;
 
@@ -10,10 +9,11 @@ public class Message
     public Guid ChatId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
-    public string Role { get; set; }
-    public string Content { get; set; }
+    public string Role { get; set; } = "";
+    public string Content { get; set; } = "";
     public string? Model { get; set; }
     public double Temperature { get; set; }
+    public List<Reply> Reply { get; set; }
     
     public MessageLocalModel ToLocalModel()
     {
@@ -47,6 +47,12 @@ public class Message
     
     public static Message FromReadModel(MessageReadModel model)
     {
+        var reply = new List<Reply>();
+        foreach (var replyReadModel in model.reply)
+        {
+            reply.Add(Core.Reply.FromReadModel(replyReadModel));
+        }
+        
         return new Message
         {
             Id = model.uuid,
@@ -57,6 +63,7 @@ public class Message
             Content = model.content,
             Model = model.model,
             Temperature = model.temperature,
+            Reply = reply,
         };
     }
     

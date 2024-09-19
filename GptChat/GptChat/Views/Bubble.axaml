@@ -26,6 +26,8 @@
                 </Border>
                 
                 <StackPanel Margin="10 7 10 7" Spacing="7">
+                    <StackPanel Name="ReplyPanel" Spacing="5" IsVisible="False"></StackPanel>
+                    
                     <Grid Name="TranslatedWidget" IsVisible="False">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -41,7 +43,7 @@
 
             <Border.ContextMenu>
                 <ContextMenu Opened="MenuBase_OnOpened">
-                    <MenuItem Header="Ответить">
+                    <MenuItem Header="Ответить" Click="Reply_OnClick">
                         <MenuItem.Icon>
                             <PathIcon Data="{DynamicResource IconReply}" />
                         </MenuItem.Icon>

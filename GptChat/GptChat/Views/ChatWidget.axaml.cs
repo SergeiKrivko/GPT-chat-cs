@@ -30,6 +30,8 @@ public partial class ChatWidget : UserControl
         LoadMessages();
         ApplyChanges();
         Chat.Updated += ApplyChanges;
+        
+        ChatSettings.GetModels();
     }
 
     private void ApplyChanges()
@@ -54,6 +56,7 @@ public partial class ChatWidget : UserControl
         Dispatcher.UIThread.Post(() =>
         {
             var widget = new Bubble(obj);
+            widget.ReplyClicked += AddReply;
             _bubbles[widget.Message.Id] = widget;
             try
             {
@@ -73,6 +76,13 @@ public partial class ChatWidget : UserControl
         });
     }
 
+    private void AddReply(Message message)
+    {
+        if (ReplyList.Replys.Contains(message))
+            return;
+        ReplyList.Replys.Add(message);
+    }
+
     private void OnItemRemoved(int index, Message obj)
     {
         if (!_bubbles.ContainsKey(obj.Id))
@@ -80,6 +90,7 @@ public partial class ChatWidget : UserControl
         Dispatcher.UIThread.Post(() =>
         {
             BubblesStackPanel.Children.Remove(_bubbles[obj.Id]);
+            _bubbles[obj.Id].ReplyClicked -= AddReply;
             _bubbles.Remove(obj.Id);
         });
     }
@@ -113,7 +124,8 @@ public partial class ChatWidget : UserControl
         if (String.IsNullOrEmpty(text))
             return;
         InputBox.Text = "";
-        await ChatsService.Instance.CreateMessage(Chat, "user", text, true);
+        await ChatsService.Instance.CreateMessage(Chat, "user", text, ReplyList.Replys.ToList(), true);
+        ReplyList.Replys.Clear();
     }
 
     private void ScrollViewer_OnScrollChanged(object? sender, ScrollChangedEventArgs e)

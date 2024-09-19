@@ -10,4 +10,6 @@ public class MessageReadModel
     public string content { get; set; }
     public string? model { get; set; }
     public double temperature { get; set; }
+    
+    public List<ReplyReadModel> reply { get; set; }
 }

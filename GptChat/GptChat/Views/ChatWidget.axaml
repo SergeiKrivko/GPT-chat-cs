@@ -14,8 +14,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Border BorderThickness="0 0 0 1" 
-                Background="{DynamicResource SystemRegionBrush}" 
+        <Border BorderThickness="0 0 0 1"
+                Background="{DynamicResource SystemRegionBrush}"
                 BorderBrush="Gray" Height="50" HorizontalAlignment="Stretch">
             <Grid Margin="5">
                 <Grid.ColumnDefinitions>
@@ -34,56 +34,62 @@
                         <PathIcon Data="{DynamicResource IconSearch}"></PathIcon>
                     </ToggleButton>
                     <Button Width="40" Height="40" Background="Transparent" Name="SettingsButton"
-                                  Click="SettingsButton_OnClick">
+                            Click="SettingsButton_OnClick">
                         <PathIcon Data="{DynamicResource IconOptions}"></PathIcon>
                     </Button>
                 </StackPanel>
             </Grid>
         </Border>
-        <Panel Grid.Row="1">
-            <Border Background="Transparent">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+        <Border Grid.Row="1" Background="Transparent">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                    <Panel>
-                        <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled"
-                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Name="ScrollViewer"
-                                      ScrollChanged="ScrollViewer_OnScrollChanged">
-                            <StackPanel Name="BubblesStackPanel" Spacing="10" Margin="15" />
-                        </ScrollViewer>
-                        <Border CornerRadius="10" Background="{DynamicResource SystemRegionBrush}"
-                                Margin="10" VerticalAlignment="Top" IsVisible="False" Name="ErrorBox">
-                            <TextBlock Name="ErrorTextBlock"/>
-                        </Border>
-                        <Canvas HorizontalAlignment="Stretch">
-                            <Button Canvas.Bottom="20" Canvas.Right="20" Width="40" Height="40" CornerRadius="20"
-                                    Click="DownButton_OnClick" Name="DownButton" 
-                                    Background="{DynamicResource ListBackgroundColor}">
-                                <PathIcon Data="{DynamicResource IconDown}"></PathIcon>
-                            </Button>
-                        </Canvas>
-                    </Panel>
-                    <Border Grid.Row="1" CornerRadius="15" Background="{DynamicResource SystemRegionBrush}"
-                            MinHeight="40" MaxHeight="300" Margin="5">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <TextBox TextWrapping="Wrap" Margin="5" AcceptsReturn="True" KeyDown="InputBox_OnKeyDown"
-                                     BorderThickness="0" Watermark="Message..." Classes="ChatInput" Name="InputBox" />
-                            <Button Grid.Column="1" Width="30" Height="30" Margin="0 5 5 5"
-                                    Background="Transparent" Click="SendButton_OnClick">
-                                <PathIcon Data="{DynamicResource IconSend}"></PathIcon>
-                            </Button>
-                        </Grid>
+                <Panel>
+                    <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled"
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Name="ScrollViewer"
+                                  ScrollChanged="ScrollViewer_OnScrollChanged">
+                        <StackPanel Name="BubblesStackPanel" Spacing="10" Margin="15" />
+                    </ScrollViewer>
+                    <Border CornerRadius="10" Background="{DynamicResource SystemRegionBrush}"
+                            Margin="10" VerticalAlignment="Top" IsVisible="False" Name="ErrorBox">
+                        <TextBlock Name="ErrorTextBlock" />
                     </Border>
-                </Grid>
-            </Border>
-        </Panel>
+                    <Canvas HorizontalAlignment="Stretch">
+                        <Button Canvas.Bottom="20" Canvas.Right="20" Width="40" Height="40" CornerRadius="20"
+                                Click="DownButton_OnClick" Name="DownButton"
+                                Background="{DynamicResource ListBackgroundColor}">
+                            <PathIcon Data="{DynamicResource IconDown}"></PathIcon>
+                        </Button>
+                    </Canvas>
+                </Panel>
+                <Border Grid.Row="1" CornerRadius="15" Background="{DynamicResource SystemRegionBrush}"
+                        MinHeight="40" MaxHeight="300" Margin="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <views:ReplyList Grid.ColumnSpan="2" Name="ReplyList" />
+
+                        <TextBox Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" Margin="5" AcceptsReturn="True"
+                                 KeyDown="InputBox_OnKeyDown"
+                                 BorderThickness="0" Watermark="Message..." Classes="ChatInput" Name="InputBox" />
+                        <Button Grid.Row="1" Grid.Column="1" Width="30" Height="30" Margin="0 5 5 5"
+                                Background="Transparent" Click="SendButton_OnClick">
+                            <PathIcon Data="{DynamicResource IconSend}"></PathIcon>
+                        </Button>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

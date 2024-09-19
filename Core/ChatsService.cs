@@ -168,9 +168,20 @@ public class ChatsService
         }
     }
     
-    public async Task CreateMessage(Chat chat, string role, string content, bool prompt = false)
+    public async Task CreateMessage(Chat chat, string role, string content, List<Message>? reply = null, bool prompt = false)
     {
-        _logger.LogDebug("Creating new message...");
+        _logger.LogDebug($"Creating new message with {reply?.Count} reply ...");
+
+        var replys = new List<ReplyCreateModel>();
+        foreach (var message in reply ?? new())
+        {
+            replys.Add(new ReplyCreateModel()
+            {
+                reply_to = message.Id,
+                type = "explicit",
+            });
+        }
+        
         await ChatSocketService.Instance.CreateMessage(new MessageCreateModel
         {
             chat_uuid =chat.Id,
@@ -178,6 +189,7 @@ public class ChatsService
             content = content,
             model = chat.Model,
             temperature = chat.Temperature,
+            reply = replys,
         }, prompt);
     }
 

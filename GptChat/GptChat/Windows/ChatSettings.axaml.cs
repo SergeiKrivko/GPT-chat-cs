@@ -11,22 +11,23 @@ namespace GptChat.Windows;
 public partial class ChatSettings : Window
 {
     public Chat? Chat { get; set; }
-    private List<string> Models { get; } = new();
+    private static List<string> Models { get; } = new();
     
     public ChatSettings()
     {
         InitializeComponent();
-        GetModels();
+        ChatModelBox.ItemsSource = Models;
+        if (Models.Count == 0)
+            GetModels();
     }
 
-    private async void GetModels()
+    public static async void GetModels()
     {
         while (true)
         {
             try
             {
                 Models.AddRange(await GptHttpService.Instance.GetModels());
-                ChatModelBox.ItemsSource = Models;
                 break;
             }
             catch (ConnectionException)
@@ -50,7 +51,6 @@ public partial class ChatSettings : Window
         if (Chat == null)
             return;
         var flag = false;
-        Console.WriteLine(ChatModelBox.SelectedValue);
         flag |= Chat.Name != ChatNameBox.Text;
         flag |= Chat.Model != (string?)ChatModelBox.SelectedValue;
         flag |= Chat.ContextSize != ContextBox.Value;

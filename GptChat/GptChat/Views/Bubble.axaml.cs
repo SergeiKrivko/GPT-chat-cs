@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Threading;
 using Core;
+using Core.LocalRepository;
 using Core.RemoteRepository;
 using Utils.Http.Exceptions;
 
@@ -29,7 +30,7 @@ public partial class Bubble : UserControl
         Dispatcher.UIThread.Post(() => MarkdownViewer.Markdown = Message.Content);
     }
 
-    public void Update()
+    private async void Update()
     {
         InnerBorder.HorizontalAlignment = Message.Role == "user" ? HorizontalAlignment.Right : HorizontalAlignment.Left;
         InnerBorder.CornerRadius = new CornerRadius(10, 10,
@@ -40,6 +41,12 @@ public partial class Bubble : UserControl
         UserBackground.IsVisible = Message.Role == "user";
         GptBackground.IsVisible = Message.Role != "user";
         MarkdownViewer.Markdown = Message.Content;
+
+        foreach (var reply in Message.Reply.FindAll(r => r.Type == "explicit"))
+        {
+            ReplyPanel.Children.Add(new ReplyItem(await LocalRepository.Instance.GetMessage(reply.ReplyTo)));
+            ReplyPanel.IsVisible = true;
+        }
     }
 
     private async void CopyText_OnClick(object? sender, RoutedEventArgs e)
@@ -124,5 +131,14 @@ public partial class Bubble : UserControl
         MarkdownViewer.Markdown = Message.Content;
         _lang = _originalLang;
         TranslatedWidget.IsVisible = false;
+    }
+
+    public delegate void ReplyClickHandler(Message message);
+
+    public event ReplyClickHandler? ReplyClicked;
+
+    private void Reply_OnClick(object? sender, RoutedEventArgs e)
+    {
+        ReplyClicked?.Invoke(Message);
     }
 }

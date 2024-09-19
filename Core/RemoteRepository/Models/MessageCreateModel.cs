@@ -7,4 +7,5 @@ public class MessageCreateModel
     public string content { get; set; }
     public string? model { get; set; }
     public decimal temperature { get; set; }
+    public List<ReplyCreateModel> reply { get; set; }
 }
