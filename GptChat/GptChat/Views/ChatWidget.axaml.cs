@@ -58,6 +58,7 @@ public partial class ChatWidget : UserControl
         {
             var widget = new Bubble(obj);
             widget.ReplyClicked += AddReply;
+            widget.ScrollRequested += ScrollToMessage;
             _bubbles[widget.Message.Id] = widget;
             try
             {
@@ -94,6 +95,7 @@ public partial class ChatWidget : UserControl
                 return;
             BubblesStackPanel.Children.Remove(_bubbles[obj.Id]);
             _bubbles[obj.Id].ReplyClicked -= AddReply;
+            _bubbles[obj.Id].ScrollRequested -= ScrollToMessage;
             _bubbles.Remove(obj.Id);
         });
     }
@@ -156,6 +158,14 @@ public partial class ChatWidget : UserControl
     {
         await Task.Delay(10);
         ScrollViewer.Offset = new Vector(0, ScrollViewer.ScrollBarMaximum.Y - offset);
+    }
+
+    private void ScrollToMessage(Guid messageId)
+    {
+        if (_bubbles.TryGetValue(messageId, out var targetBubble))
+        {   
+            ScrollFromTop(targetBubble.Bounds.Top);
+        }
     }
 
     private void DownButton_OnClick(object? sender, RoutedEventArgs e)

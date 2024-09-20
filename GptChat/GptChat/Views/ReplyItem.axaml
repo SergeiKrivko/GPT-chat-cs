@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="GptChat.Views.ReplyItem">
-    <Button CornerRadius="8" Height="30" Background="Transparent" Padding="5 0" HorizontalAlignment="Stretch">
+    <Button CornerRadius="8" Height="30" Background="Transparent" Padding="5 0" HorizontalAlignment="Stretch"
+            Click="Button_OnClick">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>

@@ -78,7 +78,8 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <views:ReplyList Grid.ColumnSpan="2" Name="ReplyList" />
+                        <views:ReplyList Grid.ColumnSpan="2" Name="ReplyList" 
+                                         ScrollRequested="ScrollToMessage" />
 
                         <TextBox Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" Margin="5" AcceptsReturn="False"
                                  KeyDown="InputBox_OnKeyDown" PastingFromClipboard="InputBox_OnPastingFromClipboard"

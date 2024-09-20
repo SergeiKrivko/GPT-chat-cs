@@ -23,6 +23,10 @@ public partial class ReplyList : UserControl
         Replys.Cleared += OnCleared;
     }
 
+    public delegate void ScrollRequestHandler(Guid messageId);
+
+    public event ScrollRequestHandler? ScrollRequested;
+
     private void OnCleared()
     {
         Dispatcher.UIThread.Post(() =>
@@ -41,6 +45,7 @@ public partial class ReplyList : UserControl
         {
             var widget = new ReplyItem(obj);
             widget.RemoveClicked += m => Replys.Remove(obj);
+            widget.ScrollClicked += id => ScrollRequested?.Invoke(id);
             _items[widget.Message.Id] = widget;
             ReplyStackPanel.Children.Insert(index, widget);
             Margin = new Thickness(5);

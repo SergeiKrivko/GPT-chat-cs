@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -33,8 +34,17 @@ public partial class ReplyItem : UserControl
 
     public event RemoveClickHandler? RemoveClicked;
 
+    public delegate void ScrollClickHandler(Guid messageId);
+
+    public event ScrollClickHandler? ScrollClicked;
+
     private void RemoveButton_OnClick(object? sender, RoutedEventArgs e)
     {
         RemoveClicked?.Invoke(Message);
+    }
+
+    private void Button_OnClick(object? sender, RoutedEventArgs e)
+    {
+        ScrollClicked?.Invoke(Message.Id);
     }
 }

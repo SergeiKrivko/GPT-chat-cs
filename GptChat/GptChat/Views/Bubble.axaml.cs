@@ -49,7 +49,10 @@ public partial class Bubble : UserControl
 
         foreach (var reply in Message.Reply.FindAll(r => r.Type == "explicit"))
         {
-            ReplyPanel.Children.Add(new ReplyItem(await LocalRepository.Instance.GetMessage(reply.ReplyTo)));
+            var item = new ReplyItem(await LocalRepository.Instance.GetMessage(reply.ReplyTo));
+            item.Removable = false;
+            item.ScrollClicked += id => ScrollRequested?.Invoke(id);
+            ReplyPanel.Children.Add(item);
             ReplyPanel.IsVisible = true;
         }
     }
@@ -146,4 +149,8 @@ public partial class Bubble : UserControl
     {
         ReplyClicked?.Invoke(Message);
     }
+
+    public delegate void ScrollClickHandler(Guid id);
+
+    public event ScrollClickHandler? ScrollRequested;
 }
