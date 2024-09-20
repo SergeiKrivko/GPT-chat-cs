@@ -1,0 +1,110 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style Selector="Border.dot1">
+        <Style.Animations>
+            <Animation Duration="0:0:0.7" IterationCount="INFINITE">
+                <KeyFrame Cue="0%">
+                    <Setter Property="Width" Value="6" />
+                    <Setter Property="Height" Value="6" />
+                    <Setter Property="CornerRadius" Value="3" />
+                </KeyFrame>
+                <KeyFrame Cue="20%">
+                    <Setter Property="Width" Value="10" />
+                    <Setter Property="Height" Value="10" />
+                    <Setter Property="CornerRadius" Value="5" />
+                </KeyFrame>
+                <KeyFrame Cue="40%">
+                    <Setter Property="Width" Value="10" />
+                    <Setter Property="Height" Value="10" />
+                    <Setter Property="CornerRadius" Value="5" />
+                </KeyFrame>
+                <KeyFrame Cue="60%">
+                    <Setter Property="Width" Value="6" />
+                    <Setter Property="Height" Value="6" />
+                    <Setter Property="CornerRadius" Value="3" />
+                </KeyFrame>
+                <KeyFrame Cue="80%">
+                    <Setter Property="Width" Value="6" />
+                    <Setter Property="Height" Value="6" />
+                    <Setter Property="CornerRadius" Value="3" />
+                </KeyFrame>
+                <KeyFrame Cue="100%">
+                    <Setter Property="Width" Value="6" />
+                    <Setter Property="Height" Value="6" />
+                    <Setter Property="CornerRadius" Value="3" />
+                </KeyFrame>
+            </Animation>
+        </Style.Animations>
+    </Style><Style Selector="Border.dot2">
+        <Style.Animations>
+            <Animation Duration="0:0:0.7" IterationCount="INFINITE">
+                <KeyFrame Cue="0%">
+                    <Setter Property="Width" Value="6" />
+                    <Setter Property="Height" Value="6" />
+                    <Setter Property="CornerRadius" Value="3" />
+                </KeyFrame>
+                <KeyFrame Cue="20%">
+                    <Setter Property="Width" Value="6" />
+                    <Setter Property="Height" Value="6" />
+                    <Setter Property="CornerRadius" Value="3" />
+                </KeyFrame>
+                <KeyFrame Cue="40%">
+                    <Setter Property="Width" Value="10" />
+                    <Setter Property="Height" Value="10" />
+                    <Setter Property="CornerRadius" Value="5" />
+                </KeyFrame>
+                <KeyFrame Cue="60%">
+                    <Setter Property="Width" Value="10" />
+                    <Setter Property="Height" Value="10" />
+                    <Setter Property="CornerRadius" Value="5" />
+                </KeyFrame>
+                <KeyFrame Cue="80%">
+                    <Setter Property="Width" Value="6" />
+                    <Setter Property="Height" Value="6" />
+                    <Setter Property="CornerRadius" Value="3" />
+                </KeyFrame>
+                <KeyFrame Cue="100%">
+                    <Setter Property="Width" Value="6" />
+                    <Setter Property="Height" Value="6" />
+                    <Setter Property="CornerRadius" Value="3" />
+                </KeyFrame>
+            </Animation>
+        </Style.Animations>
+    </Style><Style Selector="Border.dot3">
+        <Style.Animations>
+            <Animation Duration="0:0:0.7" IterationCount="INFINITE">
+                <KeyFrame Cue="0%">
+                    <Setter Property="Width" Value="6" />
+                    <Setter Property="Height" Value="6" />
+                    <Setter Property="CornerRadius" Value="3" />
+                </KeyFrame>
+                <KeyFrame Cue="20%">
+                    <Setter Property="Width" Value="6" />
+                    <Setter Property="Height" Value="6" />
+                    <Setter Property="CornerRadius" Value="3" />
+                </KeyFrame>
+                <KeyFrame Cue="40%">
+                    <Setter Property="Width" Value="6" />
+                    <Setter Property="Height" Value="6" />
+                    <Setter Property="CornerRadius" Value="3" />
+                </KeyFrame>
+                <KeyFrame Cue="60%">
+                    <Setter Property="Width" Value="10" />
+                    <Setter Property="Height" Value="10" />
+                    <Setter Property="CornerRadius" Value="5" />
+                </KeyFrame>
+                <KeyFrame Cue="80%">
+                    <Setter Property="Width" Value="10" />
+                    <Setter Property="Height" Value="10" />
+                    <Setter Property="CornerRadius" Value="5" />
+                </KeyFrame>
+                <KeyFrame Cue="100%">
+                    <Setter Property="Width" Value="6" />
+                    <Setter Property="Height" Value="6" />
+                    <Setter Property="CornerRadius" Value="3" />
+                </KeyFrame>
+            </Animation>
+        </Style.Animations>
+    </Style>
+</Styles>

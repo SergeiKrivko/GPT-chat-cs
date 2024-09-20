@@ -8,6 +8,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Core;
+using Core.RemoteRepository;
 using GptChat.Windows;
 
 namespace GptChat.Views;
@@ -30,6 +31,11 @@ public partial class ChatWidget : UserControl
         LoadMessages();
         ApplyChanges();
         Chat.Updated += ApplyChanges;
+        ChatSocketService.Instance.MessageFinished += message =>
+        {
+            if (message.ChatId == Chat.Id)
+                Dispatcher.UIThread.Post(() => GptWritingBlock.IsVisible = false);
+        };
         InputBox.Text = "";
     }
 
@@ -126,9 +132,10 @@ public partial class ChatWidget : UserControl
         var text = InputBox.Text;
         if (String.IsNullOrEmpty(text))
             return;
-        InputBox.Text = "";
         await ChatsService.Instance.CreateMessage(Chat, "user", text, ReplyList.Replys.ToList(), true);
+        InputBox.Text = "";
         ReplyList.Replys.Clear();
+        GptWritingBlock.IsVisible = true;
     }
 
     private void ScrollViewer_OnScrollChanged(object? sender, ScrollChangedEventArgs e)

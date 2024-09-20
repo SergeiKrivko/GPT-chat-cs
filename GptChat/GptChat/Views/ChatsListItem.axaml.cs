@@ -57,7 +57,7 @@ public partial class ChatsListItem : UserControl
 
     private void UpdateLastMessageText()
     {
-        LastMessageBlock.Text = Chat.LastMessage?.Content.Replace("\n\n", "\n");
+        Dispatcher.UIThread.Post(() => LastMessageBlock.Text = Chat.LastMessage?.Content.Replace("\n\n", "\n"));
     }
 
     private void Button_OnClick(object? sender, RoutedEventArgs e)

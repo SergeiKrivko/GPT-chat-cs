@@ -40,6 +40,10 @@ public class ChatSocketService : SocketService
 
     public event AddContentHandler? MessageContentAdded;
 
+    public delegate void MessageFinishedHandler(Message message);
+
+    public event MessageFinishedHandler? MessageFinished;
+
     public delegate void GptErrorHandler(string text);
 
     public event GptErrorHandler? GptError;
@@ -83,6 +87,10 @@ public class ChatSocketService : SocketService
             data => { MessageContentAdded?.Invoke(data.chat, data.uuid, data.content); });
         Subscribe<string>("gpt_error",
             data => { GptError?.Invoke(data); });
+        Subscribe<MessageReadModel>("message_finish", message =>
+        {
+            MessageFinished?.Invoke(Message.FromReadModel(message));
+        });
         Subscribe<UpdatesModel>("updates", data =>
         {
             foreach (var chat in data.new_chats)

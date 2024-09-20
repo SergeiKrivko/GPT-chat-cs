@@ -1,0 +1,44 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Default">
+            <Color x:Key="ChatBackgroundColor">#FFFFFF</Color>
+            <Color x:Key="ListBackgroundColor">#C4CBCF</Color>
+            <Color x:Key="GptBubbleStartColor">#A2A2A2</Color>
+            <Color x:Key="GptBubbleStopColor">#D4D4D4</Color>
+            <Color x:Key="UserBubbleStartColor">#4DAC39</Color>
+            <Color x:Key="UserBubbleStopColor">#98EE4A</Color>
+            <Color x:Key="WallpaperColor">#5C9E3F</Color>
+            <Color x:Key="SuccessColor">#2B5E2E</Color>
+            <Color x:Key="WarningColor">#2B5E2E</Color>
+            <Color x:Key="DangerColor">#2B5E2E</Color>
+
+            <Color x:Key="ChatColor0">#C2190C</Color>
+            <Color x:Key="ChatColor1">#9E6915</Color>
+            <Color x:Key="ChatColor2">#176494</Color>
+            <Color x:Key="ChatColor3">#2E7539</Color>
+            <Color x:Key="ChatColor4">#5D3075</Color>
+            <Color x:Key="ChatColor5">#737373</Color>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+            <Color x:Key="ChatBackgroundColor">#2B2D30</Color>
+            <Color x:Key="ListBackgroundColor">#1F2024</Color>
+            <Color x:Key="GptBubbleStartColor">#18191C</Color>
+            <Color x:Key="GptBubbleStopColor">#2A2B30</Color>
+            <Color x:Key="UserBubbleStartColor">#194218</Color>
+            <Color x:Key="UserBubbleStopColor">#225920</Color>
+            <Color x:Key="WallpaperColor">#2B5E2E</Color>
+            <Color x:Key="SuccessColor">#2B5E2E</Color>
+            <Color x:Key="WarningColor">#C4821A</Color>
+            <Color x:Key="DangerColor">#C2190C</Color>
+
+            <Color x:Key="ChatColor0">#C2190C</Color>
+            <Color x:Key="ChatColor1">#9E6915</Color>
+            <Color x:Key="ChatColor2">#176494</Color>
+            <Color x:Key="ChatColor3">#2E7539</Color>
+            <Color x:Key="ChatColor4">#5D3075</Color>
+            <Color x:Key="ChatColor5">#737373</Color>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>
