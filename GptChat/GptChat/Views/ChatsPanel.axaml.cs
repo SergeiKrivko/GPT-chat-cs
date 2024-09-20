@@ -6,6 +6,8 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using Core;
+using Core.RemoteRepository;
+using GptChat.Windows;
 
 namespace GptChat.Views;
 
@@ -19,6 +21,15 @@ public partial class ChatsPanel : UserControl
         ChatsService.Instance.Chats.ItemInserted += OnItemInserted;
         ChatsService.Instance.Chats.ItemRemoved += OnItemRemoved;
         ChatsService.Instance.CurrentChanged += OnCurrentChatChanged;
+        ChatSocketService.Instance.GptError += OnGptError;
+    }
+
+    private void OnGptError(string text)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            MessageBox.Danger(text);
+        });
     }
 
     private void OnCurrentChatChanged(Chat? chat)

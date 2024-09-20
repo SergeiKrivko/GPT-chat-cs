@@ -1,0 +1,18 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="GptChat.Windows.MessageBox"
+        Width="300" Height="140"
+        Title="MessageBox">
+    <Grid ColumnDefinitions="Auto *" Margin="20">
+        <PathIcon Grid.Column="0" Name="SuccessIcon" Data="{DynamicResource IconSuccess}"
+                  IsVisible="False" Width="72" Height="72" Foreground="{DynamicResource SuccessColor}" />
+        <PathIcon Grid.Column="0" Name="WarningIcon" Data="{DynamicResource IconWarning}"
+                  IsVisible="False" Width="72" Height="72" Foreground="{DynamicResource WarningColor}" />
+        <PathIcon Grid.Column="0" Name="DangerIcon" Data="{DynamicResource IconDanger}"
+                  IsVisible="False" Width="72" Height="72" Foreground="{DynamicResource DangerColor}" />
+        <TextBlock Grid.Column="1" Name="TextBlock" Margin="20 0 0 0 " />
+    </Grid>
+</Window>
