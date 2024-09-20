@@ -9,4 +9,5 @@ public class ChatReadModel
     public string? model { get; set; }
     public int context_size { get; set; }
     public decimal temperature { get; set; }
+    public int? color { get; set; }
 }

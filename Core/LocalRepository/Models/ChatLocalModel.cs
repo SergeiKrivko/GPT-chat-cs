@@ -11,4 +11,5 @@ public class ChatLocalModel
     public string? Model { get; set; }
     public int ContextSize { get; set; }
     public decimal Temperature { get; set; }
+    public int? Color { get; set; }
 }

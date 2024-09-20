@@ -1,7 +1,10 @@
-﻿using Avalonia;
+﻿using System;
+using System.Collections.Generic;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Core;
 
 namespace GptChat.Views;
@@ -9,6 +12,9 @@ namespace GptChat.Views;
 public partial class ChatsListItem : UserControl
 {
     public Chat Chat { get; }
+
+    private IObservable<object?> _resource;
+    private IDisposable? _subscription = null;
 
     public delegate void SelectHandler(Chat chat);
 
@@ -25,11 +31,22 @@ public partial class ChatsListItem : UserControl
         Chat = chat;
         InitializeComponent();
         Update();
+        
+        _resource = Resources.GetResourceObservable("ChatColor0");
     }
 
     private void Update()
     {
         ChatNameBlock.Text = Chat.Name;
+        _subscription?.Dispose();
+        _resource = Resources.GetResourceObservable($"ChatColor{Chat.Color ?? 0}");
+        _subscription = _resource.Subscribe(o =>
+        {
+            // CircleBorder.Background = DrawingBrush.Parse(o?.ToString() ?? "#2B5E2E");
+            if (!string.IsNullOrEmpty(o?.ToString()) && o?.ToString() != "(unset)")
+                CircleBorder.Background = Brush.Parse(o.ToString() ?? "#2B5E2E");
+        });
+        CircleTextBlock.Text = GenerateText();
     }
 
     private void Button_OnClick(object? sender, RoutedEventArgs e)
@@ -40,5 +57,28 @@ public partial class ChatsListItem : UserControl
     private async void DeleteChat_OnClick(object? sender, RoutedEventArgs e)
     {
         await ChatsService.Instance.DeleteChat(Chat.Id);
+    }
+
+    private string GenerateText()
+    {
+        var text = Chat.Name;
+        var lst = new List<string>();
+
+        foreach (var word in text.Split())
+        {
+            lst.Add(word[..1]);
+            for (var i = 1; i < word.Length; i++)
+            {
+                var letter = word[i..(i + 1)];
+                if (letter == letter.ToUpper())
+                    lst.Add(letter);
+            }
+        }
+
+        if (lst.Count == 0)
+            return "";
+        if (lst.Count == 1)
+            return lst[0];
+        return string.Join(string.Empty, lst.Slice(0, 2));
     }
 }

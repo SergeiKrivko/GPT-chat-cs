@@ -6,7 +6,10 @@
              x:Class="GptChat.Views.ChatsListItem" HorizontalAlignment="Stretch">
     <ToggleButton CornerRadius="0" HorizontalAlignment="Stretch" BorderThickness="0" Click="Button_OnClick"
                   Name="MainButton" Background="Transparent">
-        <StackPanel Orientation="Horizontal" Margin="5">
+        <StackPanel Orientation="Horizontal" Margin="5" Spacing="10">
+            <Border Name="CircleBorder" Width="40" Height="40" CornerRadius="20">
+                <TextBlock Name="CircleTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" />
+            </Border>
             <StackPanel>
                 <TextBlock Name="ChatNameBlock" FontSize="16" />
                 <!-- <TextBlock Text="{Binding Path}" FontSize="10"/> -->

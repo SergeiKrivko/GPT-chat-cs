@@ -4,7 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Core;
 using Core.RemoteRepository;
-using SocketIOClient;
+using Utils.Http.Exceptions;
 
 namespace GptChat.Windows;
 

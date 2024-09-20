@@ -15,6 +15,7 @@ public class Chat : IComparable<Chat>
     public string? Model { get; set; }
     public int ContextSize { get; set; }
     public decimal Temperature { get; set; }
+    public int? Color { get; set; }
     
     public ObservableList<Message> Messages { get; } = new();
     public Guid? LastLoadedMessage { get; set; } = null;
@@ -31,7 +32,8 @@ public class Chat : IComparable<Chat>
             Name = Name,
             Model = Model,
             ContextSize = ContextSize,
-            Temperature = Temperature
+            Temperature = Temperature,
+            Color = Color,
         };
     }
 
@@ -46,6 +48,7 @@ public class Chat : IComparable<Chat>
             Model = model.Model,
             ContextSize = model.ContextSize,
             Temperature = model.Temperature,
+            Color = model.Color,
         };
     }
     
@@ -60,6 +63,7 @@ public class Chat : IComparable<Chat>
             Model = model.model,
             ContextSize = model.context_size,
             Temperature = model.temperature,
+            Color = model.color,
         };
     }
 
