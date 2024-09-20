@@ -27,6 +27,7 @@ public partial class ChatSettings : Window
         {
             try
             {
+                Models.Clear();
                 Models.AddRange(await GptHttpService.Instance.GetModels());
                 break;
             }

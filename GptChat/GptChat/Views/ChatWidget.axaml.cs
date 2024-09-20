@@ -31,8 +31,6 @@ public partial class ChatWidget : UserControl
         ApplyChanges();
         Chat.Updated += ApplyChanges;
         InputBox.Text = "";
-        
-        ChatSettings.GetModels();
     }
 
     private void ApplyChanges()

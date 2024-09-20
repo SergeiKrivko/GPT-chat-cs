@@ -22,6 +22,8 @@ public partial class ChatsPanel : UserControl
         ChatsService.Instance.Chats.ItemRemoved += OnItemRemoved;
         ChatsService.Instance.CurrentChanged += OnCurrentChatChanged;
         ChatSocketService.Instance.GptError += OnGptError;
+        
+        ChatSettings.GetModels();
     }
 
     private void OnGptError(string text)
