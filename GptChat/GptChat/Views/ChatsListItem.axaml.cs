@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Threading;
 using Core;
 
 namespace GptChat.Views;
@@ -31,22 +32,32 @@ public partial class ChatsListItem : UserControl
         Chat = chat;
         InitializeComponent();
         Update();
+        Chat.Updated += Update;
+        Chat.Messages.ItemInserted += (index, message) => UpdateLastMessageText();
+        Chat.Messages.ItemRemoved += (index, message) => UpdateLastMessageText();
         
         _resource = Resources.GetResourceObservable("ChatColor0");
     }
 
     private void Update()
     {
-        ChatNameBlock.Text = Chat.Name;
-        _subscription?.Dispose();
-        _resource = Resources.GetResourceObservable($"ChatColor{Chat.Color ?? 0}");
-        _subscription = _resource.Subscribe(o =>
+        Dispatcher.UIThread.Post(() =>
         {
-            // CircleBorder.Background = DrawingBrush.Parse(o?.ToString() ?? "#2B5E2E");
-            if (!string.IsNullOrEmpty(o?.ToString()) && o?.ToString() != "(unset)")
-                CircleBorder.Background = Brush.Parse(o.ToString() ?? "#2B5E2E");
+            ChatNameBlock.Text = Chat.Name;
+            _subscription?.Dispose();
+            _resource = Resources.GetResourceObservable($"ChatColor{Chat.Color ?? 0}");
+            _subscription = _resource.Subscribe(o =>
+            {
+                if (!string.IsNullOrEmpty(o?.ToString()) && o.ToString() != "(unset)")
+                    CircleBorder.Background = Brush.Parse(o?.ToString() ?? "#2B5E2E");
+            });
+            CircleTextBlock.Text = GenerateText();
         });
-        CircleTextBlock.Text = GenerateText();
+    }
+
+    private void UpdateLastMessageText()
+    {
+        LastMessageBlock.Text = Chat.LastMessage?.Content.Replace("\n\n", "\n");
     }
 
     private void Button_OnClick(object? sender, RoutedEventArgs e)
@@ -80,5 +91,10 @@ public partial class ChatsListItem : UserControl
         if (lst.Count == 1)
             return lst[0];
         return string.Join(string.Empty, lst.Slice(0, 2));
+    }
+
+    private void Control_OnSizeChanged(object? sender, SizeChangedEventArgs e)
+    {
+        // LastMessageBlock.Width = e.NewSize.Width - 60;
     }
 }

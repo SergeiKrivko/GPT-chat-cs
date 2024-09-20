@@ -3,18 +3,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="GptChat.Views.ChatsListItem" HorizontalAlignment="Stretch">
+             x:Class="GptChat.Views.ChatsListItem" HorizontalAlignment="Stretch"
+             SizeChanged="Control_OnSizeChanged">
     <ToggleButton CornerRadius="0" HorizontalAlignment="Stretch" BorderThickness="0" Click="Button_OnClick"
                   Name="MainButton" Background="Transparent">
-        <StackPanel Orientation="Horizontal" Margin="5" Spacing="10">
-            <Border Name="CircleBorder" Width="40" Height="40" CornerRadius="20">
-                <TextBlock Name="CircleTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" />
+        <Grid Margin="0" ColumnDefinitions="Auto *" RowDefinitions="Auto Auto">
+            <Border Grid.RowSpan="2" Name="CircleBorder" Width="48" Height="48" CornerRadius="24"
+                    Margin="0 0 10 0">
+                <TextBlock Name="CircleTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" />
             </Border>
-            <StackPanel>
-                <TextBlock Name="ChatNameBlock" FontSize="16" />
-                <!-- <TextBlock Text="{Binding Path}" FontSize="10"/> -->
-            </StackPanel>
-        </StackPanel>
+            <TextBlock Grid.Row="0" Grid.Column="1" Name="ChatNameBlock" FontSize="16" VerticalAlignment="Bottom" />
+            <TextBlock Grid.Row="1" Grid.Column="1" Name="LastMessageBlock" FontSize="12" 
+                       Foreground="Gray" Height="32" TextWrapping="Wrap" VerticalAlignment="Top" />
+        </Grid>
         <ToggleButton.ContextMenu>
             <ContextMenu>
                 <MenuItem Header="Переместить в архив">

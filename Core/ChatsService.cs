@@ -42,6 +42,9 @@ public class ChatsService
             {
                 AuthService.Instance.UserReady += OnUserReady;
             }
+
+            await Task.Delay(100);
+            SortChats();
         }
     }
 
@@ -271,30 +274,15 @@ public class ChatsService
             chat.Messages.Pop(0);
         }
 
-        chat.LastLoadedMessage = chat.Messages[0].Id;
+        chat.LastLoadedMessage = chat.Messages.Count > 0 ? chat.Messages[0].Id : null;
         _logger.LogDebug($"Unload messages from '{chat.Name}' until = {chat.LastLoadedMessage}");
     }
 
-    private async Task<DateTime> GetChatLastMessageTime(Chat chat)
-    {
-        var messages = await _localRepository.GetAllMessages(chat.Id);
-        if (messages.Count == 0)
-            return default;
-        chat.LastMessageTime = messages[^1].CreatedAt;
-        _logger.LogDebug($"Chat '{chat.Name}' last message = {messages[^1].CreatedAt}");
-        return messages[^1].CreatedAt;
-    }
-
-    public async void SortChats()
+    private void SortChats()
     {
         _logger.LogDebug("Start sorting chats...");
-        foreach (var chat in Chats)
-        {
-            await GetChatLastMessageTime(chat);
-        }
         var chats = Chats.ToList();
         chats.Sort();
-        // Chats.Clear();
         foreach (var chat in chats)
         {
             Chats.MoveItem(chat, 0);

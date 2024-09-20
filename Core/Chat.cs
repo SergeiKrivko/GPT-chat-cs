@@ -11,7 +11,7 @@ public class Chat : IComparable<Chat>
     public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
-    public string Name { get; set; }
+    public string Name { get; set; } = "";
     public string? Model { get; set; }
     public int ContextSize { get; set; }
     public decimal Temperature { get; set; }
@@ -20,7 +20,13 @@ public class Chat : IComparable<Chat>
     public ObservableList<Message> Messages { get; } = new();
     public Guid? LastLoadedMessage { get; set; } = null;
     
-    public DateTime? LastMessageTime { get; set; }
+    public Message? LastMessage { get; private set; }
+
+    private Chat()
+    {
+        Messages.ItemInserted += (index, message) => LastMessage = Messages.Count == 0 ? null : Messages[^1];
+        Messages.ItemRemoved += (index, message) => LastMessage = Messages.Count == 0 ? null : Messages[^1];
+    }
 
     public ChatLocalModel ToLocalModel()
     {
@@ -96,14 +102,14 @@ public class Chat : IComparable<Chat>
 
     public int CompareTo(Chat? other)
     {
-        if (LastMessageTime == null)
+        if (LastMessage?.CreatedAt == null)
         {
-            if (other?.LastMessageTime == null)
+            if (other?.LastMessage?.CreatedAt == null)
                 return 0;
             return -1;
         }
-        if (other?.LastMessageTime == null)
+        if (other?.LastMessage?.CreatedAt == null)
             return 1;
-        return LastMessageTime > other.LastMessageTime ? 1 : -1;
+        return LastMessage?.CreatedAt > other.LastMessage?.CreatedAt ? 1 : -1;
     }
 }
