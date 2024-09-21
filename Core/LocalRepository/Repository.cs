@@ -60,6 +60,21 @@ public class Repository<T> where T: new()
 
         return res;
     }
+
+    public async Task<T?> TryGet(Expression<Func<T, bool>> predExpr)
+    {
+        T? res;
+        try
+        {
+            res = await _database.Table<T>().Where(predExpr).FirstAsync();
+        }
+        catch (Exception)
+        {
+            res = default;
+        }
+
+        return res;
+    }
     
     public async Task<T> Get<U>(Expression<Func<T, bool>> predExpr, Expression<Func<T, U>> orderExpr)
     {

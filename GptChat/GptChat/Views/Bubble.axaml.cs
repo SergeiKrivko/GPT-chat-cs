@@ -15,7 +15,7 @@ public partial class Bubble : UserControl
 {
     public Message Message { get; }
     private string? _originalLang = null;
-    private string? _lang = null;
+    private string? _lang;
 
     public double MaxBubbleWidth
     {
@@ -27,6 +27,11 @@ public partial class Bubble : UserControl
         Message = message;
         Message.Updated += OnMessageOnUpdated;
         InitializeComponent();
+        if (Message.Transaction != null)
+        {
+            _lang = Message.Transaction.DstLang;
+            _originalLang = Message.Transaction.SrcLang;
+        }
         Update();
     }
 
@@ -45,7 +50,10 @@ public partial class Bubble : UserControl
         UserBackground.CornerRadius = InnerBorder.CornerRadius;
         UserBackground.IsVisible = Message.Role == "user";
         GptBackground.IsVisible = Message.Role != "user";
-        MarkdownViewer.Markdown = Message.Content;
+        MarkdownViewer.Markdown = Message.Text;
+        
+        TranslatedWidget.IsVisible = Message.Transaction != null;
+        TranslatedFromBlock.Text = $"Переведено с {Message.Transaction?.SrcLang}";
 
         foreach (var reply in Message.Reply.FindAll(r => r.Type == "explicit"))
         {
@@ -76,10 +84,9 @@ public partial class Bubble : UserControl
         try
         {
             var res = await TranslateHttpService.Instance.Translate(Message.Content, dst);
-            MarkdownViewer.Markdown = res.res;
-            TranslatedWidget.IsVisible = true;
-            TranslatedFromBlock.Text = $"Переведено с {res.src}";
+            await LocalRepository.Instance.AddTranslation(Message, res.res, res.src, res.dst);
             _lang = res.dst;
+            Update();
         }
         catch (HttpServiceException e)
         {
@@ -131,14 +138,14 @@ public partial class Bubble : UserControl
                 Console.WriteLine(exception);
             }
         }
-        TranslateToRussianItem.IsVisible = _lang != "rus";
+        TranslateToRussianItem.IsVisible = _lang != "rus" && _originalLang != "rus";
     }
 
-    private void ShowOriginal_OnClick(object? sender, RoutedEventArgs e)
+    private async void ShowOriginal_OnClick(object? sender, RoutedEventArgs e)
     {
-        MarkdownViewer.Markdown = Message.Content;
+        await LocalRepository.Instance.RemoveTranslation(Message);
         _lang = _originalLang;
-        TranslatedWidget.IsVisible = false;
+        Update();
     }
 
     public delegate void ReplyClickHandler(Message message);

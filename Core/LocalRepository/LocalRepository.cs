@@ -13,6 +13,7 @@ public class LocalRepository
     private Repository<ChatLocalModel> Chats { get; set; }
     private Repository<MessageLocalModel> Messages { get; set; }
     private Repository<ReplyLocalModel> Replys { get; set; }
+    private Repository<TranslationLocalModel> Translations { get; set; }
 
     public static LocalRepository Instance
     {
@@ -46,6 +47,7 @@ public class LocalRepository
         Chats = new Repository<ChatLocalModel>(_database);
         Messages = new Repository<MessageLocalModel>(_database);
         Replys = new Repository<ReplyLocalModel>(_database);
+        Translations = new Repository<TranslationLocalModel>(_database);
     }
 
     public async Task<Chat> GetChat(Guid id)
@@ -84,6 +86,7 @@ public class LocalRepository
     {
         var mes = Message.FromLocalModel(await Messages.Get(t => t.Id == id));
         mes.Reply = await GetReply(id);
+        mes.Transaction = await GetTranslation(mes.Id);
         return mes;
     }
 
@@ -94,6 +97,7 @@ public class LocalRepository
         {
             var mes = Message.FromLocalModel(model);
             mes.Reply = await GetReply(mes.Id);
+            mes.Transaction = await GetTranslation(mes.Id);
             res.Add(mes);
         }
 
@@ -118,12 +122,18 @@ public class LocalRepository
         {
             var mes = Message.FromLocalModel(model);
             mes.Reply = await GetReply(mes.Id);
+            mes.Transaction = await GetTranslation(mes.Id);
             res.Add(mes);
         }
         
         if (beforeMessage != null)
             res = res.FindAll(m => m.CreatedAt < beforeMessage.CreatedAt);
         return res;
+    }
+
+    private async Task<TranslationLocalModel?> GetTranslation(Guid messageId)
+    {
+        return await Translations.TryGet(m => m.MessageId == messageId);
     }
 
     private async Task<List<Reply>> GetReply(Guid messageId)
@@ -161,6 +171,28 @@ public class LocalRepository
         }
         catch (KeyNotFoundException e)
         {
+        }
+    }
+
+    public async Task AddTranslation(Message message, string text, string src, string dst)
+    {
+        var translation = new TranslationLocalModel()
+        {
+            MessageId = message.Id,
+            Text = text,
+            SrcLang = src,
+            DstLang = dst,
+        };
+        await Translations.Insert(translation);
+        message.Transaction = translation;
+    }
+
+    public async Task RemoveTranslation(Message message)
+    {
+        if (message.Transaction != null)
+        {
+            await Translations.Remove(message.Transaction);
+            message.Transaction = null;
         }
     }
 }

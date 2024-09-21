@@ -1,4 +1,5 @@
-﻿using Core.LocalRepository.Models;
+﻿using System.Transactions;
+using Core.LocalRepository.Models;
 using Core.RemoteRepository.Models;
 
 namespace Core;
@@ -14,6 +15,10 @@ public class Message
     public string? Model { get; set; }
     public double Temperature { get; set; }
     public List<Reply> Reply { get; set; }
+    
+    public TranslationLocalModel? Transaction { get; set; }
+
+    public string Text => Transaction?.Text ?? Content;
     
     public MessageLocalModel ToLocalModel()
     {
