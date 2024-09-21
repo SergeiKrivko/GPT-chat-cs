@@ -7,7 +7,7 @@
              SizeChanged="Control_OnSizeChanged">
     <ToggleButton CornerRadius="0" HorizontalAlignment="Stretch" BorderThickness="0" Click="Button_OnClick"
                   Name="MainButton" Background="Transparent">
-        <Grid Margin="0" ColumnDefinitions="Auto *" RowDefinitions="Auto Auto">
+        <Grid Margin="0" ColumnDefinitions="Auto * Auto" RowDefinitions="Auto Auto">
             <Border Grid.RowSpan="2" Name="CircleBorder" Width="48" Height="48" CornerRadius="24"
                     Margin="0 0 10 0">
                 <TextBlock Name="CircleTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" />
@@ -15,10 +15,27 @@
             <TextBlock Grid.Row="0" Grid.Column="1" Name="ChatNameBlock" FontSize="16" VerticalAlignment="Bottom" />
             <TextBlock Grid.Row="1" Grid.Column="1" Name="LastMessageBlock" FontSize="12" 
                        Foreground="Gray" Height="32" TextWrapping="Wrap" VerticalAlignment="Top" />
+            <PathIcon Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Data="{DynamicResource IconPin}"
+                      Width="16" Height="16" Foreground="Gray" Name="IconPinned" IsVisible="False" />
         </Grid>
         <ToggleButton.ContextMenu>
             <ContextMenu>
-                <MenuItem Header="Переместить в архив">
+                <MenuItem Header="Закрепить" Name="ButtonPin" Click="ButtonPin_OnClick">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{DynamicResource IconPin}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Открепить" Name="ButtonUnpin" Click="ButtonUnpin_OnClick">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{DynamicResource IconUnPin}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Переместить в архив" Name="ButtonArchive" Click="ButtonArchive_OnClick">
+                    <MenuItem.Icon>
+                        <PathIcon Data="{DynamicResource IconArchive}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Вернуть из архива" Name="ButtonUnArchive" Click="ButtonUnArchive_OnClick">
                     <MenuItem.Icon>
                         <PathIcon Data="{DynamicResource IconArchive}" />
                     </MenuItem.Icon>

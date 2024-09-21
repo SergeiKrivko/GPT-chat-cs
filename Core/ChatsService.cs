@@ -34,7 +34,7 @@ public class ChatsService
             _logger.LogDebug("Init local repository");
             await _localRepository.Init();
             _logger.LogDebug("Loading chats from local repository");
-            await _loadLocalChats();
+            await LoadLocalChats();
             SortChats();
             if (AuthService.Instance.User != null && AuthService.Instance.Refreshed)
                 OnUserReady(AuthService.Instance.User);
@@ -123,6 +123,12 @@ public class ChatsService
         _logger.LogDebug($"Adding chat '{chat.Id}'...");
         await _localRepository.InsertChat(chat);
         Chats.Add(chat);
+        
+        if (!ChatSocketService.Instance.LoadingUpdates)
+        {
+            await Task.Delay(100);
+            SortChats();
+        }
     }
 
     private async void OnChatUpdated(Chat chat)
@@ -130,6 +136,11 @@ public class ChatsService
         _logger.LogDebug($"Updating chat '{chat.Id}'...");
         await _localRepository.SaveChat(chat);
         GetChat(chat.Id).Update(chat);
+        
+        if (!ChatSocketService.Instance.LoadingUpdates)
+        {
+            SortChats();
+        }
     }
 
     private async void OnChatDeleted(Guid chatId)
@@ -155,6 +166,8 @@ public class ChatsService
             model = chat.Model,
             context_size = chat.ContextSize,
             temperature = chat.Temperature,
+            pinned = chat.Pinned,
+            archived = chat.Archived,
         });
     }
 
@@ -163,7 +176,7 @@ public class ChatsService
         SaveChat(GetChat(chatId));
     }
 
-    private async Task _loadLocalChats()
+    private async Task LoadLocalChats()
     {
         foreach (var chat in await _localRepository.GetAllChats())
         {
@@ -208,7 +221,12 @@ public class ChatsService
         await _localRepository.InsertMessage(message);
         var chat = GetChat(message.ChatId);
         chat.Messages.Add(message);
-        // SortChats();
+        
+        if (!ChatSocketService.Instance.LoadingUpdates)
+        {
+            await Task.Delay(100);
+            SortChats();
+        }
     }
 
     private async void OnMessageContentAdded(Guid chatId, Guid messageId, string content)
@@ -240,7 +258,6 @@ public class ChatsService
             }
         }
         await _localRepository.RemoveMessage(messageId);
-        // SortChats();
     }
 
     public async Task LoadMessages(Guid chatId, int count)

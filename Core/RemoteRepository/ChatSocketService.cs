@@ -10,6 +10,8 @@ public class ChatSocketService : SocketService
 {
     private static ChatSocketService? _instance;
 
+    public bool LoadingUpdates { get; private set; } = false;
+
     public static ChatSocketService Instance
     {
         get
@@ -93,6 +95,7 @@ public class ChatSocketService : SocketService
         });
         Subscribe<UpdatesModel>("updates", data =>
         {
+            LoadingUpdates = true;
             foreach (var chat in data.new_chats)
             {
                 ChatAdded?.Invoke(Chat.FromReadModel(chat));
@@ -112,6 +115,8 @@ public class ChatSocketService : SocketService
             {
                 MessageDeleted?.Invoke(Message.FromReadModel(message).Id);
             }
+
+            LoadingUpdates = false;
 
             _updatesLoaded = true;
             if (_lastRequestTime != null)

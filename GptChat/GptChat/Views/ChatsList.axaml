@@ -16,7 +16,7 @@
             <Button Width="40" Height="40" Background="Transparent" Click="CreateChatButton_OnClick">
                 <PathIcon Data="{DynamicResource IconPlus}"></PathIcon>
             </Button>
-            <ToggleButton Width="40" Height="40" Background="Transparent">
+            <ToggleButton Width="40" Height="40" Background="Transparent" Name="ArchiveButton" IsCheckedChanged="ArchiveButton_OnIsCheckedChanged">
                 <PathIcon Data="{DynamicResource IconArchive}"/>
             </ToggleButton>
             <!-- <Button Width="40" Height="40" Background="Transparent"> -->

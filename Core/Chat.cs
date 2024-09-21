@@ -15,6 +15,8 @@ public class Chat : IComparable<Chat>
     public string? Model { get; set; }
     public int ContextSize { get; set; }
     public decimal Temperature { get; set; }
+    public bool Pinned { get; set; }
+    public bool Archived { get; set; }
     public int? Color { get; set; }
     
     public ObservableList<Message> Messages { get; } = new();
@@ -39,6 +41,8 @@ public class Chat : IComparable<Chat>
             Model = Model,
             ContextSize = ContextSize,
             Temperature = Temperature,
+            Pinned = Pinned,
+            Archived = Archived,
             Color = Color,
         };
     }
@@ -54,6 +58,8 @@ public class Chat : IComparable<Chat>
             Model = model.Model,
             ContextSize = model.ContextSize,
             Temperature = model.Temperature,
+            Pinned = model.Pinned,
+            Archived = model.Archived,
             Color = model.Color,
         };
     }
@@ -69,6 +75,8 @@ public class Chat : IComparable<Chat>
             Model = model.model,
             ContextSize = model.context_size,
             Temperature = model.temperature,
+            Pinned = model.pinned,
+            Archived = model.archived,
             Color = model.color,
         };
     }
@@ -86,6 +94,8 @@ public class Chat : IComparable<Chat>
         Model = chat.Model;
         ContextSize = chat.ContextSize;
         Temperature = chat.Temperature;
+        Pinned = chat.Pinned;
+        Archived = chat.Archived;
         Updated?.Invoke();
     }
 
@@ -102,6 +112,13 @@ public class Chat : IComparable<Chat>
 
     public int CompareTo(Chat? other)
     {
+        if (other == null)
+            return -1;
+        if (Pinned && !other.Pinned)
+            return 1;
+        if (!Pinned && other.Pinned)
+            return -1;
+        
         if (LastMessage?.CreatedAt == null)
         {
             if (other?.LastMessage?.CreatedAt == null)

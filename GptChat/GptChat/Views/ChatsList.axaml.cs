@@ -7,6 +7,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using Core;
+using Core.RemoteRepository;
 using GptChat.Windows;
 
 namespace GptChat.Views;
@@ -24,6 +25,7 @@ public partial class ChatsList : UserControl
         ChatsService.Instance.Chats.ItemInserted += OnItemInserted;
         ChatsService.Instance.Chats.ItemRemoved += OnItemRemoved;
         ChatsService.Instance.Chats.ItemMoved += OnItemMoved;
+        ChatSocketService.Instance.ChatUpdated += chat => FilterArchive();
     }
 
     private void OnItemInserted(int index, Chat obj)
@@ -36,6 +38,7 @@ public partial class ChatsList : UserControl
             widget.Selected += chat => ChatsService.Instance.Current = chat;
             _items[widget.Chat.Id] = widget;
             ChatsPanel.Children.Insert(index, widget);
+            FilterArchive();
         });
     }
 
@@ -46,6 +49,7 @@ public partial class ChatsList : UserControl
             if (!_items.Remove(obj.Id, out var item))
                 return;
             ChatsPanel.Children.Remove(item);
+            FilterArchive();
         });
     }
 
@@ -83,5 +87,21 @@ public partial class ChatsList : UserControl
         {
             await dialog.ShowDialog(desktop.MainWindow);
         }
+    }
+
+    private void FilterArchive()
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            foreach (var item in _items.Values)
+            {
+                item.IsVisible = item.Chat.Archived == ArchiveButton.IsChecked;
+            }
+        });
+    }
+
+    private void ArchiveButton_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
+    {
+        FilterArchive();
     }
 }

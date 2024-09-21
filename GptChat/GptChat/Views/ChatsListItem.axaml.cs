@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Core;
@@ -15,7 +13,7 @@ public partial class ChatsListItem : UserControl
     public Chat Chat { get; }
 
     private IObservable<object?> _resource;
-    private IDisposable? _subscription = null;
+    private IDisposable? _subscription;
 
     public delegate void SelectHandler(Chat chat);
 
@@ -49,9 +47,14 @@ public partial class ChatsListItem : UserControl
             _subscription = _resource.Subscribe(o =>
             {
                 if (!string.IsNullOrEmpty(o?.ToString()) && o.ToString() != "(unset)")
-                    CircleBorder.Background = Brush.Parse(o?.ToString() ?? "#2B5E2E");
+                    CircleBorder.Background = Brush.Parse(o.ToString() ?? "#2B5E2E");
             });
             CircleTextBlock.Text = GenerateText();
+            ButtonPin.IsVisible = !Chat.Pinned;
+            ButtonUnpin.IsVisible = Chat.Pinned;
+            ButtonArchive.IsVisible = !Chat.Archived;
+            ButtonUnArchive.IsVisible = Chat.Archived;
+            IconPinned.IsVisible = Chat.Pinned;
         });
     }
 
@@ -96,5 +99,29 @@ public partial class ChatsListItem : UserControl
     private void Control_OnSizeChanged(object? sender, SizeChangedEventArgs e)
     {
         // LastMessageBlock.Width = e.NewSize.Width - 60;
+    }
+
+    private void ButtonPin_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Chat.Pinned = true;
+        ChatsService.Instance.SaveChat(Chat);
+    }
+
+    private void ButtonUnpin_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Chat.Pinned = false;
+        ChatsService.Instance.SaveChat(Chat);
+    }
+
+    private void ButtonArchive_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Chat.Archived = true;
+        ChatsService.Instance.SaveChat(Chat);
+    }
+
+    private void ButtonUnArchive_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Chat.Archived = false;
+        ChatsService.Instance.SaveChat(Chat);
     }
 }
