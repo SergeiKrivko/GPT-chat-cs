@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Utils;
 using Utils.Http;
 using Utils.Http.Exceptions;
+using Timer = System.Timers.Timer;
 
 namespace Auth;
 
@@ -17,6 +18,8 @@ public class AuthService : HttpService
     private ILogger _logger = LogService.CreateLogger("Auth");
 
     private bool _refreshed = false;
+    
+    private Timer _timer;
 
     public bool Refreshed
     {
@@ -44,7 +47,13 @@ public class AuthService : HttpService
                 SettingsService.Instance.Set("user", _user);
             }
 
-            RefreshTokenLoop();
+            if (_user?.ExpiresAt != null)
+            {
+                _timer.Interval = int.Max(10, (int)(_user.ExpiresAt - DateTime.Now).Value.TotalMilliseconds - 10000);
+                _logger.LogInformation($"Waiting for {_timer.Interval} milliseconds");
+                _timer.Start();
+            } else
+                _timer.Stop();
         }
     }
 
@@ -59,6 +68,8 @@ public class AuthService : HttpService
 
     private AuthService()
     {
+        _timer = new Timer(1000);
+        _timer.Elapsed += async (sender, args) => await RefreshToken();
         User = SettingsService.Instance.Get<User>("user");
     }
 
@@ -95,76 +106,41 @@ public class AuthService : HttpService
         return null;
     }
 
-    private Guid? _operationId;
-
-    private async void RefreshTokenLoop()
-    {
-        if (User == null)
-            return;
-        
-        var operationId = Guid.NewGuid();
-        _operationId = operationId;
-        
-        Refreshed = false;
-        while (true)
-        {
-            if (_operationId != operationId)
-                break;
-            if (User == null || User.RefreshToken == null)
-            {
-                _logger.LogInformation("Token refresh failed: log out");
-                User = null;
-                break;
-            }
-
-            if (User.ExpiresAt != null)
-            {
-                Refreshed = true;
-                _logger.LogDebug($"Waiting {int.Max(0, (int)(User.ExpiresAt - DateTime.Now).Value.TotalMilliseconds - 10000)} ms");
-                await Task.Delay(int.Max(0, (int)(User.ExpiresAt - DateTime.Now).Value.TotalMilliseconds - 10000));
-            }
-            
-            if (_operationId != operationId)
-                break;
-            
-            try
-            {
-                await RefreshToken();
-            }
-            catch (ConnectionException)
-            {
-                Refreshed = false;
-                _logger.LogInformation("Token refresh failed: no connection");
-                await Task.Delay(10000);
-            }
-            catch (HttpServiceException)
-            {
-                Refreshed = false;
-                _logger.LogInformation("Token refresh failed: log out");
-                User = null;
-                await Task.Delay(100000);
-            }
-        }
-    }
-
     private async Task RefreshToken()
     {
-        Refreshed = false;
-        if (User == null)
-            return;
-        var resp = await Post<RefreshResponseBody>(
-            $"https://securetoken.googleapis.com/v1/token?key={FirebaseApiKey}",
-            new RefreshRequestBody
-            {
-                grant_type = "refresh_token",
-                refresh_token = User.RefreshToken ?? "",
-            });
-        User.IdToken = resp.id_token;
-        User.RefreshToken = resp.refresh_token;
-        User.ExpiresAt = DateTime.Now + TimeSpan.FromSeconds(resp.expires_in);
-        User = User;
-        _logger.LogInformation("Token was refreshed successfully");
-        Refreshed = true;
+        _timer.Stop();
+        try
+        {
+            Refreshed = false;
+            if (User == null)
+                throw new HttpServiceException();
+            var resp = await Post<RefreshResponseBody>(
+                $"https://securetoken.googleapis.com/v1/token?key={FirebaseApiKey}",
+                new RefreshRequestBody
+                {
+                    grant_type = "refresh_token",
+                    refresh_token = User.RefreshToken ?? "",
+                });
+            User.IdToken = resp.id_token;
+            User.RefreshToken = resp.refresh_token;
+            User.ExpiresAt = DateTime.Now + TimeSpan.FromSeconds(resp.expires_in);
+            _logger.LogInformation("Token was refreshed successfully");
+            User = User;
+            Refreshed = true;
+        }
+        catch (ConnectionException)
+        {
+            Refreshed = false;
+            _timer.Interval = 10000;
+            _logger.LogError($"Token refresh failed: no connection. Waiting for {_timer.Interval} milliseconds");
+            _timer.Start();
+        }
+        catch (HttpServiceException)
+        {
+            Refreshed = false;
+            _logger.LogError("Token refresh failed: log out");
+            User = null;
+        }
     }
 
     public void SignOut()
