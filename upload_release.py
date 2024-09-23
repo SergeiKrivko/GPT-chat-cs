@@ -21,6 +21,6 @@ repo = g.get_user().get_repo('GPT-chat-cs')
 
 release = repo.get_latest_release()
 if release.tag_name != f"v{version}":
-    release = repo.create_git_tag_and_release(f"v{version}", '', f"Version {version}", '', '', '')
+    release = repo.create_git_release(f"v{version}", f"Version {version}", '')
 
 release.upload_asset(path, name=f"GPT-chat-{system}")
