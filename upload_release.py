@@ -4,7 +4,7 @@ import os
 from github import Github, Auth
 
 
-path, system = sys.argv[1], sys.argv[2]
+path, arch = sys.argv[1], sys.argv[2]
 
 
 with open("version.txt", 'r', encoding='utf-8') as f:
@@ -24,6 +24,6 @@ repo = g.get_repo('SergeiKrivko/GPT-chat-cs')
 release = repo.get_latest_release()
 print(repr(release.tag_name), version)
 if release.tag_name != "v" + version:
-    release = repo.create_git_release("v" + version, "Version 1.0.1", '')
+    release = repo.create_git_release("v" + version, f"Version {version}", '')
 
-release.upload_asset(path, name=f"GPT-chat-{system}")
+release.upload_asset(path, name=f"gptchat-{version}-{arch}")
