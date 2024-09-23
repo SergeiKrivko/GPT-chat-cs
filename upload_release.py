@@ -27,3 +27,6 @@ if release.tag_name != f"v{version}":
     release = repo.create_git_release(f"v{version}", f"Version {version}", '')
 
 release.upload_asset(path, name=f"GPT-chat-{system}")
+
+if sys.platform == 'win32':
+    repo.create_git_release('v0.0.1', "Version 0.0.1", '')
