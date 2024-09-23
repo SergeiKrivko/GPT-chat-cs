@@ -26,7 +26,7 @@ public partial class WallpaperWidget : UserControl
         _timer.AutoReset = true;
         _timer.Enabled = false;
         _timer.Start();
-
+        
         var resource = Resources.GetResourceObservable("WallpaperColor");
         resource.Subscribe(o =>
         {

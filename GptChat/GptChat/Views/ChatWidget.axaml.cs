@@ -8,7 +8,9 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Core;
+using Core.LocalRepository;
 using Core.RemoteRepository;
+using Core.Search;
 using GptChat.Windows;
 
 namespace GptChat.Views;
@@ -21,6 +23,8 @@ public partial class ChatWidget : UserControl
     private double _offsetFromBottom;
     private bool _loading;
     private bool _inited;
+    private List<SearchResult> _searchResults = new();
+    private int _currentSearchIndex = 0;
 
     public ChatWidget(Chat chat)
     {
@@ -112,11 +116,12 @@ public partial class ChatWidget : UserControl
     private async void SettingsButton_OnClick(object? sender, RoutedEventArgs e)
     {
         var dialog = new ChatSettings();
-        
+
         dialog.Chat = Chat;
         dialog.Update();
-        
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && desktop.MainWindow != null)
+
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop &&
+            desktop.MainWindow != null)
         {
             await dialog.ShowDialog(desktop.MainWindow);
         }
@@ -168,7 +173,7 @@ public partial class ChatWidget : UserControl
     private void ScrollToMessage(Guid messageId)
     {
         if (_bubbles.TryGetValue(messageId, out var targetBubble))
-        {   
+        {
             ScrollFromTop(targetBubble.Bounds.Top);
         }
     }
@@ -223,6 +228,70 @@ public partial class ChatWidget : UserControl
             var text = await clipboard.GetTextAsync() ?? "";
             InputBox.Text = InputBox.Text?.Insert(InputBox.CaretIndex, text);
             InputBox.CaretIndex += text.Length;
+        }
+    }
+
+    private void SearchButton_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
+    {
+        SearchPanel.IsVisible = SearchButton.IsChecked ?? false;
+    }
+
+
+    private async void SearchBox_OnTextChanged(object? sender, TextChangedEventArgs e)
+    {
+        _searchResults = await Searcher.Search(Chat.Id, SearchBox.Text);
+        _currentSearchIndex = _searchResults.Count - 1;
+        if (_searchResults.Count > 0)
+        {
+            _searchResults[^1].Selected = true;
+        }
+        SearchCountBlock.Text = $"{_currentSearchIndex + 1} / {_searchResults.Count}";
+        
+        foreach (var bubble in _bubbles.Values)
+        {
+            bubble.SearchResults.Clear();
+        }
+
+        foreach (var result in _searchResults)
+        {
+            if (_bubbles.TryGetValue(result.MessageId, out var bubble))
+                bubble.SearchResults.Add(result);
+        }
+        foreach (var bubble in _bubbles.Values)
+        {
+            bubble.Update();
+        }
+    }
+
+    private void SelectSearchResult(int index)
+    {
+        _searchResults[_currentSearchIndex].Selected = false;
+        if (_searchResults[_currentSearchIndex].MessageId != _searchResults[index].MessageId)
+        {
+            _bubbles[_searchResults[_currentSearchIndex].MessageId].Update();
+        }
+
+        _currentSearchIndex = index;
+        _searchResults[index].Selected = true;
+        _bubbles[_searchResults[index].MessageId].Update();
+        SearchCountBlock.Text = $"{_currentSearchIndex + 1} / {_searchResults.Count}";
+        
+        ScrollToMessage(_searchResults[index].MessageId);
+    }
+
+    private void ButtonNext_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (_currentSearchIndex < _searchResults.Count - 1)
+        {
+            SelectSearchResult(_currentSearchIndex + 1);
+        }
+    }
+
+    private void ButtonPrevious_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (_currentSearchIndex > 0)
+        {
+            SelectSearchResult(_currentSearchIndex - 1);
         }
     }
 }

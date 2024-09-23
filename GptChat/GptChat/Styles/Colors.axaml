@@ -20,6 +20,9 @@
             <Color x:Key="ChatColor3">#2E7539</Color>
             <Color x:Key="ChatColor4">#5D3075</Color>
             <Color x:Key="ChatColor5">#737373</Color>
+            
+            <Color x:Key="SearchResultColor">#9C7B09</Color>
+            <Color x:Key="SelectedSearchResultColor">#C93D1C</Color>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <Color x:Key="ChatBackgroundColor">#2B2D30</Color>
@@ -39,6 +42,9 @@
             <Color x:Key="ChatColor3">#2E7539</Color>
             <Color x:Key="ChatColor4">#5D3075</Color>
             <Color x:Key="ChatColor5">#737373</Color>
+            
+            <Color x:Key="SearchResultColor">#9C7B09</Color>
+            <Color x:Key="SelectedSearchResultColor">#C93D1C</Color>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

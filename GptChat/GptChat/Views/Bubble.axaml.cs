@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using Core;
 using Core.LocalRepository;
 using Core.RemoteRepository;
+using Core.Search;
 using Utils.Http.Exceptions;
 
 namespace GptChat.Views;
@@ -16,6 +21,7 @@ public partial class Bubble : UserControl
     public Message Message { get; }
     private string? _originalLang = null;
     private string? _lang;
+    public List<SearchResult> SearchResults { get; } = new();
 
     public double MaxBubbleWidth
     {
@@ -32,6 +38,7 @@ public partial class Bubble : UserControl
             _lang = Message.Transaction.DstLang;
             _originalLang = Message.Transaction.SrcLang;
         }
+
         Update();
     }
 
@@ -40,7 +47,7 @@ public partial class Bubble : UserControl
         Dispatcher.UIThread.Post(() => MarkdownViewer.Markdown = Message.Content);
     }
 
-    private async void Update()
+    public async void Update()
     {
         InnerBorder.HorizontalAlignment = Message.Role == "user" ? HorizontalAlignment.Right : HorizontalAlignment.Left;
         InnerBorder.CornerRadius = new CornerRadius(10, 10,
@@ -50,8 +57,7 @@ public partial class Bubble : UserControl
         UserBackground.CornerRadius = InnerBorder.CornerRadius;
         UserBackground.IsVisible = Message.Role == "user";
         GptBackground.IsVisible = Message.Role != "user";
-        MarkdownViewer.Markdown = Message.Text;
-        
+
         TranslatedWidget.IsVisible = Message.Transaction != null;
         TranslatedFromBlock.Text = $"Переведено с {Message.Transaction?.SrcLang}";
 
@@ -63,6 +69,20 @@ public partial class Bubble : UserControl
             ReplyPanel.Children.Add(item);
             ReplyPanel.IsVisible = true;
         }
+
+        var markdown = Message.Text;
+        foreach (var result in SearchResults.OrderBy(r => r.Offset).Reverse())
+        {
+            if (Application.Current != null)
+            {
+                Application.Current.Resources.TryGetResource(
+                    result.Selected ? "SelectedSearchResultColor" : "SearchResultColor", null, out var color);
+                markdown = markdown.Insert(result.Offset + result.Len, "%")
+                    .Insert(result.Offset, $"%{{background:{color}}}");
+            }
+        }
+
+        MarkdownViewer.Markdown = markdown;
     }
 
     private async void CopyText_OnClick(object? sender, RoutedEventArgs e)
@@ -93,6 +113,7 @@ public partial class Bubble : UserControl
             Console.WriteLine(e);
         }
     }
+
     private void TranslateToRussianItem_OnClick(object? sender, RoutedEventArgs e)
     {
         Translate("rus");
@@ -138,6 +159,7 @@ public partial class Bubble : UserControl
                 Console.WriteLine(exception);
             }
         }
+
         TranslateToRussianItem.IsVisible = _lang != "rus" && _originalLang != "rus";
     }
 

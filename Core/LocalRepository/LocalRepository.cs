@@ -90,13 +90,14 @@ public class LocalRepository
         return mes;
     }
 
-    public async Task<List<Message>> GetAllMessages(Guid chatId)
+    public async Task<List<Message>> GetAllMessages(Guid chatId, bool selectReplys = true)
     {
         var res = new List<Message>();
         foreach (var model in await Messages.GetAll(m => m.ChatId == chatId && m.DeletedAt == null, t => t.CreatedAt))
         {
             var mes = Message.FromLocalModel(model);
-            mes.Reply = await GetReply(mes.Id);
+            if (selectReplys)
+                mes.Reply = await GetReply(mes.Id);
             mes.Transaction = await GetTranslation(mes.Id);
             res.Add(mes);
         }
