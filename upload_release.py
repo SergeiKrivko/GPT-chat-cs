@@ -7,7 +7,7 @@ from github import Github, Auth
 path, system = sys.argv[1], sys.argv[2]
 
 
-with open("version.txt") as f:
+with open("version.txt", 'r', encoding='utf-8') as f:
     version = f.read().strip().replace('\ufeff', '')
 
 print(f"Version = {repr(version)}")
@@ -27,6 +27,3 @@ if release.tag_name != "v" + version:
     release = repo.create_git_release("v" + version, "Version 1.0.1", '')
 
 release.upload_asset(path, name=f"GPT-chat-{system}")
-
-if sys.platform == 'win32':
-    repo.create_git_release('v0.0.1', "Version 0.0.1", '')
