@@ -10,6 +10,8 @@ path, system = sys.argv[1], sys.argv[2]
 with open("version.txt") as f:
     version = f.read().strip()
 
+print(f"Version = {repr(version)}")
+
 
 # using an access token
 auth = Auth.Token(os.getenv("GITHUB_TOKEN"))
@@ -17,9 +19,7 @@ auth = Auth.Token(os.getenv("GITHUB_TOKEN"))
 # Public Web GitHub
 g = Github(auth=auth)
 
-repo = g.get_user().get_repo('GPT-chat-cs')
-
-print(f"Version = {repr(version)}")
+repo = g.get_repo('SergeiKrivko/GPT-chat-cs')
 
 release = repo.get_latest_release()
 if release.tag_name != f"v{version}":
