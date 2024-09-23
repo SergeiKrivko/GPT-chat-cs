@@ -2,7 +2,7 @@
     version = f.read().strip()
 
 
-for file in ["Utils/Config.cs", "Releases/win-x64/setup.iss", "Releases/mac-x64/Contents/info.plist"]:
+for file in ["Utils/Config.cs", "Releases/win-x64/setup.iss", "Releases/mac-x64/GPT-chat-avalonia.app/Contents/info.plist"]:
     with open(file, 'r') as f:
         text = f.read()
         
