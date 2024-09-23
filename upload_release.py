@@ -22,9 +22,9 @@ g = Github(auth=auth)
 repo = g.get_repo('SergeiKrivko/GPT-chat-cs')
 
 release = repo.get_latest_release()
-if release.tag_name != f"v{version}":
-    print(repr(f"Version {version}"))
-    release = repo.create_git_release(f"v{version}", f"Version {version}", '')
+print(repr(release.tag_name), version)
+if release.tag_name != "v" + version:
+    release = repo.create_git_release("v" + version, "Version 1.0.1", '')
 
 release.upload_asset(path, name=f"GPT-chat-{system}")
 

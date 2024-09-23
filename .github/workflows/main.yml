@@ -45,137 +45,137 @@ jobs:
           name: GPT-chat-win-x64.exe
           path: Releases/win-x64/GPT-chat-setup.exe 
   
-  build-linux-x64:
-    name: Build for Linux
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .Net
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
-
-      - name: Build
-        id: build
-        run: |
-          python -c "print('version=', open('version.txt').read().replace('\ufeff', ''), sep='')" >> $GITHUB_OUTPUT
-          python3 replace_versions.py
-          cd GptChat/GptChat.Desktop
-          dotnet build --sc --runtime linux-x64 -c Release
-
-      - name: Prepare DEP package
-        run: |
-          cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/linux-x64/. Releases/linux-x64/debpkg/opt/SergeiKrivko/GPT-chat-avalonia
-
-      - name: Create DEB package
-        uses: jiro4989/build-deb-action@v3
-        with:
-          package: gptchat-avalonia
-          package_root: Releases/linux-x64/debpkg
-          maintainer: SergeiKrivko
-          version: ${{ steps.build.outputs.version }}
-          arch: 'amd64'
-          desc: 'GPT-chat-avalonia'
-
-      - name: Upload release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          pip install PyGithub
-          python3 upload_release.py gptchat-avalonia_${{ steps.build.outputs.version }}_amd64.deb linux-x64
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: GPT-chat-linux-x64.deb
-          path: gptchat-avalonia_${{ steps.build.outputs.version }}_amd64.deb
-          
-  build-macos-x64:
-    name: Build for macOS
-    runs-on: macos-12
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .Net
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
-
-      - name: Build
-        run: |
-          python3 replace_versions.py
-          cd GptChat/GptChat.Desktop
-          dotnet build --sc --runtime osx-x64 -c Release
-
-      - name: Prepare package
-        run: |
-          cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/osx-x64 Releases/mac-x64/GPT-chat-avalonia.app/Contents
-          mv Releases/mac-x64/GPT-chat-avalonia.app/Contents/osx-x64 Releases/mac-x64/GPT-chat-avalonia.app/Contents/MacOS
-
-      - name: Create installer
-        uses: QQxiaoming/create-dmg-action@v0.0.2
-        with:
-          name: GPT-chat-avalonia
-          srcdir: Releases/mac-x64/GPT-chat-avalonia.app
-
-      - name: Upload release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          pip install PyGithub
-          python3 upload_release.py GPT-chat-avalonia.dmg mac-x64
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: GPT-chat-mac-x64.dmg
-          path: GPT-chat-avalonia.dmg
-  
-  build-android:
-    name: Build for Android
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .Net
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0
-          
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Build
-        run: |
-          cd GptChat/GptChat.Android
-          dotnet workload restore
-          dotnet build
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: GPT-chat-avalonia.apk
-          path: GptChat/GptChat.Android/bin/Debug/net8.0-android/com.CompanyName.GptChat-Signed.apk
+#  build-linux-x64:
+#    name: Build for Linux
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#
+#      - name: Setup .Net
+#        uses: actions/setup-dotnet@v4
+#        with:
+#          dotnet-version: 8.0
+#
+#      - name: Setup Python
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: 3.11
+#
+#      - name: Build
+#        id: build
+#        run: |
+#          python -c "print('version=', open('version.txt').read().replace('\ufeff', ''), sep='')" >> $GITHUB_OUTPUT
+#          python3 replace_versions.py
+#          cd GptChat/GptChat.Desktop
+#          dotnet build --sc --runtime linux-x64 -c Release
+#
+#      - name: Prepare DEP package
+#        run: |
+#          cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/linux-x64/. Releases/linux-x64/debpkg/opt/SergeiKrivko/GPT-chat-avalonia
+#
+#      - name: Create DEB package
+#        uses: jiro4989/build-deb-action@v3
+#        with:
+#          package: gptchat-avalonia
+#          package_root: Releases/linux-x64/debpkg
+#          maintainer: SergeiKrivko
+#          version: ${{ steps.build.outputs.version }}
+#          arch: 'amd64'
+#          desc: 'GPT-chat-avalonia'
+#
+#      - name: Upload release
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          pip install PyGithub
+#          python3 upload_release.py gptchat-avalonia_${{ steps.build.outputs.version }}_amd64.deb linux-x64
+#
+#      - name: Upload artifacts
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: GPT-chat-linux-x64.deb
+#          path: gptchat-avalonia_${{ steps.build.outputs.version }}_amd64.deb
+#          
+#  build-macos-x64:
+#    name: Build for macOS
+#    runs-on: macos-12
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#
+#      - name: Setup .Net
+#        uses: actions/setup-dotnet@v4
+#        with:
+#          dotnet-version: 8.0
+#
+#      - name: Setup Python
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: 3.11
+#
+#      - name: Build
+#        run: |
+#          python3 replace_versions.py
+#          cd GptChat/GptChat.Desktop
+#          dotnet build --sc --runtime osx-x64 -c Release
+#
+#      - name: Prepare package
+#        run: |
+#          cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/osx-x64 Releases/mac-x64/GPT-chat-avalonia.app/Contents
+#          mv Releases/mac-x64/GPT-chat-avalonia.app/Contents/osx-x64 Releases/mac-x64/GPT-chat-avalonia.app/Contents/MacOS
+#
+#      - name: Create installer
+#        uses: QQxiaoming/create-dmg-action@v0.0.2
+#        with:
+#          name: GPT-chat-avalonia
+#          srcdir: Releases/mac-x64/GPT-chat-avalonia.app
+#
+#      - name: Upload release
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          pip install PyGithub
+#          python3 upload_release.py GPT-chat-avalonia.dmg mac-x64
+#
+#      - name: Upload artifacts
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: GPT-chat-mac-x64.dmg
+#          path: GPT-chat-avalonia.dmg
+#  
+#  build-android:
+#    name: Build for Android
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#
+#      - name: Setup .Net
+#        uses: actions/setup-dotnet@v4
+#        with:
+#          dotnet-version: 8.0
+#          
+#      - name: Set up JDK
+#        uses: actions/setup-java@v4
+#        with:
+#          java-version: '17'
+#          distribution: 'temurin'
+#
+#      - name: Setup Android SDK
+#        uses: android-actions/setup-android@v3
+#
+#      - name: Build
+#        run: |
+#          cd GptChat/GptChat.Android
+#          dotnet workload restore
+#          dotnet build
+#
+#      - name: Upload artifacts
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: GPT-chat-avalonia.apk
+#          path: GptChat/GptChat.Android/bin/Debug/net8.0-android/com.CompanyName.GptChat-Signed.apk
