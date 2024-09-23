@@ -34,7 +34,7 @@ jobs:
           
       - name: Upload release
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pip install PyGithub
           python upload_release.py Releases/win-x64/GPT-chat-setup.exe win-x64
@@ -66,7 +66,7 @@ jobs:
       - name: Build
         id: build
         run: |
-          python -c "open('version.txt').read().replace('\ufeff', '')" >> $GITHUB_OUTPUT
+          python -c "print('version=', open('version.txt').read().replace('\ufeff', ''))" >> $GITHUB_OUTPUT
           python3 replace_versions.py
           cd GptChat/GptChat.Desktop
           dotnet build --sc --runtime linux-x64 -c Release
@@ -87,10 +87,10 @@ jobs:
 
       - name: Upload release
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pip install PyGithub
-          python3 upload_release.py gptchat-avalonia_${{ steps.build.outputs.version }}_amd64.deb win-x64
+          python3 upload_release.py gptchat-avalonia_${{ steps.build.outputs.version }}_amd64.deb linux-x64
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -135,10 +135,10 @@ jobs:
 
       - name: Upload release
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pip install PyGithub
-          python3 upload_release.py GPT-chat-avalonia.dmg win-x64
+          python3 upload_release.py GPT-chat-avalonia.dmg mac-x64
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
