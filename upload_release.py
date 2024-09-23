@@ -26,4 +26,4 @@ print(repr(release.tag_name), version)
 if release.tag_name != "v" + version:
     release = repo.create_git_release("v" + version, f"Version {version}", '')
 
-release.upload_asset(path, name=f"gptchat-{version}-{arch}.{path.split('.'[-1])}")
+release.upload_asset(path, name=f"gptchat-{version}-{arch}.{path.split('.')[-1]}")
