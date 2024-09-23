@@ -15,8 +15,14 @@ jobs:
         with:
           dotnet-version: 8.0
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
       - name: Build
         run: |
+          python replace_versions.py
           cd GptChat/GptChat.Desktop
           dotnet build --sc --runtime win-x64 -c Release
 
@@ -25,6 +31,13 @@ jobs:
         with:
           path: Releases/win-x64/setup.iss
           options: /O+
+          
+      - name: Upload release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip install PyGithub
+          python upload_release.py Releases/win-x64/GPT-chat-setup.exe win-x64
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -45,8 +58,16 @@ jobs:
         with:
           dotnet-version: 8.0
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
       - name: Build
+        id: build
         run: |
+          cat version.txt >> $GITHUB_OUTPUT
+          python replace_versions.py
           cd GptChat/GptChat.Desktop
           dotnet build --sc --runtime linux-x64 -c Release
 
@@ -60,15 +81,22 @@ jobs:
           package: gptchat-avalonia
           package_root: Releases/linux-x64/debpkg
           maintainer: SergeiKrivko
-          version: 1.0.0
+          version: ${{ steps.build.outputs.version }}
           arch: 'amd64'
           desc: 'GPT-chat-avalonia'
+
+      - name: Upload release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip install PyGithub
+          python upload_release.py gptchat-avalonia_${{ steps.build.outputs.version }}_amd64.deb win-x64
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: GPT-chat-linux-x64.deb
-          path: gptchat-avalonia_1.0.0_amd64.deb
+          path: gptchat-avalonia_${{ steps.build.outputs.version }}_amd64.deb
           
   build-macos-x64:
     name: Build for macOS
@@ -83,8 +111,14 @@ jobs:
         with:
           dotnet-version: 8.0
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
       - name: Build
         run: |
+          python replace_versions.py
           cd GptChat/GptChat.Desktop
           dotnet build --sc --runtime osx-x64 -c Release
 
@@ -92,17 +126,19 @@ jobs:
         run: |
           cp -r GptChat/GptChat.Desktop/bin/Release/net8.0/osx-x64 Releases/mac-x64/GPT-chat-avalonia.app/Contents
           mv Releases/mac-x64/GPT-chat-avalonia.app/Contents/osx-x64 Releases/mac-x64/GPT-chat-avalonia.app/Contents/MacOS
-          
-          echo --------------------------------------- Releases/mac-x64/GPT-chat-avalonia.app/Contents
-          ls Releases/mac-x64/GPT-chat-avalonia.app/Contents
-          echo --------------------------------------- Releases/mac-x64/GPT-chat-avalonia.app/Contents/MacOS
-          ls Releases/mac-x64/GPT-chat-avalonia.app/Contents/MacOS
 
       - name: Create installer
         uses: QQxiaoming/create-dmg-action@v0.0.2
         with:
           name: GPT-chat-avalonia
           srcdir: Releases/mac-x64/GPT-chat-avalonia.app
+
+      - name: Upload release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip install PyGithub
+          python upload_release.py GPT-chat-avalonia.dmg win-x64
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

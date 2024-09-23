@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "GPT-chat-avalonia"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "{AppVersion}"
 #define MyAppPublisher "SergeiKrivko"
 #define MyAppURL "https://github.com/SergeiKrivko/GPT-chat-cs"
 #define MyAppExeName "GptChat.Desktop.exe"

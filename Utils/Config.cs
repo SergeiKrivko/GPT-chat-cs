@@ -6,4 +6,5 @@ public class Config
         ? "https://gptchat-api.nachert.art/"
         : "http://localhost:8000";
     public static string AppName { get; } =  $"GPT-chat{Environment.GetEnvironmentVariable("APP_NAME_SUFFIX")}";
+    public static string Version = "{AppVersion}";
 }
