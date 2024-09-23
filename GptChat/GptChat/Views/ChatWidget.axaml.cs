@@ -8,7 +8,6 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Core;
-using Core.LocalRepository;
 using Core.RemoteRepository;
 using Core.Search;
 using GptChat.Windows;
