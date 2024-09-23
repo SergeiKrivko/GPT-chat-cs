@@ -19,6 +19,8 @@ g = Github(auth=auth)
 
 repo = g.get_user().get_repo('GPT-chat-cs')
 
+print(f"Version = {repr(version)}")
+
 release = repo.get_latest_release()
 if release.tag_name != f"v{version}":
     release = repo.create_git_release(f"v{version}", f"Version {version}", '')
