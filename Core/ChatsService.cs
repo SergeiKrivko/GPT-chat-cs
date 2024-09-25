@@ -12,6 +12,7 @@ public class ChatsService
     private static ChatsService? _instance;
     private LocalRepository.LocalRepository _localRepository = LocalRepository.LocalRepository.Instance;
     private ILogger _logger = LogService.CreateLogger("Chats");
+    private bool _sorting = false;
 
     private ChatsService()
     {
@@ -297,6 +298,9 @@ public class ChatsService
 
     private void SortChats()
     {
+        if (_sorting)
+            return;
+        _sorting = true;
         _logger.LogDebug("Start sorting chats...");
         var chats = Chats.ToList();
         chats.Sort();
@@ -305,5 +309,6 @@ public class ChatsService
             Chats.MoveItem(chat, 0);
         }
         _logger.LogDebug("Chats sorted...");
+        _sorting = false;
     }
 }

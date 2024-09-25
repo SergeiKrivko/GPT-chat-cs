@@ -8,7 +8,7 @@ path, arch = sys.argv[1], sys.argv[2]
 
 
 with open("version.txt", 'r', encoding='utf-8') as f:
-    version = f.read().strip().replace('\ufeff', '')
+    version = f.read().strip()
 
 print(f"Version = {repr(version)}")
 

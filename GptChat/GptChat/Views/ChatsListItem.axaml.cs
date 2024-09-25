@@ -80,6 +80,8 @@ public partial class ChatsListItem : UserControl
 
         foreach (var word in text.Split())
         {
+            if (string.IsNullOrEmpty(word))
+                continue;
             lst.Add(word[..1]);
             for (var i = 1; i < word.Length; i++)
             {

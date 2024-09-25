@@ -50,6 +50,8 @@ public class AuthService : HttpService
             if (_user?.ExpiresAt != null)
             {
                 _timer.Interval = int.Max(10, (int)(_user.ExpiresAt - DateTime.Now).Value.TotalMilliseconds - 10000);
+                if (_timer.Interval > 10)
+                    Refreshed = true;
                 _logger.LogInformation($"Waiting for {_timer.Interval} milliseconds");
                 _timer.Start();
             } else
