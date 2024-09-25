@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Aspose.TeX" Version="24.9.0" />
       <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
     </ItemGroup>
 
