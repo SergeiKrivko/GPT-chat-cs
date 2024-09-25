@@ -37,7 +37,7 @@
                         <TextBlock Name="TranslatedFromBlock" VerticalAlignment="Center"/>
                         <Button Grid.Column="1" Click="ShowOriginal_OnClick">Показать оригинал</Button>
                     </Grid>
-                    <md:MarkdownScrollViewer Name="MarkdownViewer" />
+                    <md:MarkdownScrollViewer Name="MarkdownViewer" SelectionEnabled="True" />
                 </StackPanel>
             </Panel>
 
