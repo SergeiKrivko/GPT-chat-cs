@@ -220,23 +220,37 @@ public class ChatsService
     {
         _logger.LogDebug($"Adding message '{message.Id}'...");
         await _localRepository.InsertMessage(message);
-        var chat = GetChat(message.ChatId);
-        chat.Messages.Add(message);
-        
-        if (!ChatSocketService.Instance.LoadingUpdates)
+        try
         {
-            await Task.Delay(100);
-            SortChats();
+            var chat = GetChat(message.ChatId);
+            chat.Messages.Add(message);
+
+            if (!ChatSocketService.Instance.LoadingUpdates)
+            {
+                await Task.Delay(100);
+                SortChats();
+            }
+        }
+        catch (KeyNotFoundException)
+        {
+            _logger.LogWarning($"Chat '${message.ChatId}' not found");
         }
     }
 
     private async void OnMessageContentAdded(Guid chatId, Guid messageId, string content)
     {
         _logger.LogDebug($"Adding content to '{messageId}'...");
-        var chat = GetChat(chatId);
-        var message = chat.GetMessage(messageId);
-        message.AddContent(content);
-        await _localRepository.SaveMessage(message);
+        try
+        {
+            var chat = GetChat(chatId);
+            var message = chat.GetMessage(messageId);
+            message.AddContent(content);
+            await _localRepository.SaveMessage(message);
+        }
+        catch (Exception)
+        {
+            _logger.LogWarning($"Chat '${chatId}' or message '${messageId}' not found");
+        }
     }
 
     private async void OnMessageDeleted(Guid messageId)
