@@ -95,15 +95,17 @@
                 
                 <!-- Footer -->
                 <Border Grid.Row="2" CornerRadius="15" Background="{DynamicResource SystemRegionBrush}"
-                        MinHeight="40" MaxHeight="300" Margin="5">
+                        MinHeight="40" Margin="5">
                     <Grid RowDefinitions="Auto Auto" ColumnDefinitions="* Auto">
 
                         <views:ReplyList Grid.ColumnSpan="2" Name="ReplyList" 
                                          ScrollRequested="ScrollToMessage" />
 
-                        <TextBox Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" Margin="5" AcceptsReturn="False"
-                                 KeyDown="InputBox_OnKeyDown" PastingFromClipboard="InputBox_OnPastingFromClipboard"
-                                 Watermark="Сообщение..." Classes="ChatInput" Name="InputBox" />
+                        <ScrollViewer Grid.Row="1" Grid.Column="0" Margin="5" MaxHeight="275" >
+                            <TextBox TextWrapping="Wrap" AcceptsReturn="False"
+                                     KeyDown="InputBox_OnKeyDown" PastingFromClipboard="InputBox_OnPastingFromClipboard"
+                                     Watermark="Сообщение..." Classes="ChatInput" Name="InputBox" />
+                        </ScrollViewer>
                         <Button Grid.Row="1" Grid.Column="1" Width="30" Height="30" Margin="0 5 5 5"
                                 Background="Transparent" Click="SendButton_OnClick">
                             <PathIcon Data="{DynamicResource IconSend}"></PathIcon>
