@@ -11,7 +11,6 @@ public class ChatsService
 {
     private static ChatsService? _instance;
     private LocalRepository.LocalRepository _localRepository = LocalRepository.LocalRepository.Instance;
-    private ILogger _logger = LogService.CreateLogger("Chats");
     private bool _sorting = false;
 
     private ChatsService()
@@ -28,13 +27,13 @@ public class ChatsService
 
     private async void OnUserChanged(User? user)
     {
-        _logger.LogDebug("Clearing chats");
+        LogService.Logger.Debug("Clearing chats");
         Chats.Clear();
         if (user != null)
         {
-            _logger.LogDebug("Init local repository");
+            LogService.Logger.Debug("Init local repository");
             await _localRepository.Init();
-            _logger.LogDebug("Loading chats from local repository");
+            LogService.Logger.Debug("Loading chats from local repository");
             await LoadLocalChats();
             SortChats();
             if (AuthService.Instance.User != null && AuthService.Instance.Refreshed)
@@ -82,14 +81,14 @@ public class ChatsService
             {
                 _current = value;
                 if (_current == null)
-                    _logger.LogDebug($"Current chat changed to null");
+                    LogService.Logger.Debug($"Current chat changed to null");
                 else
-                    _logger.LogDebug($"Current chat changed to '{_current?.Id}'");
+                    LogService.Logger.Debug($"Current chat changed to '{_current?.Id}'");
                 CurrentChanged?.Invoke(Current);
             }
             else
             {
-                _logger.LogWarning($"Chat '{value.Id}' not found");
+                LogService.Logger.Warning($"Chat '{value.Id}' not found");
             }
         }
     }
@@ -109,19 +108,19 @@ public class ChatsService
 
     public async Task CreateChat()
     {
-        _logger.LogDebug("Creating new chat...");
+        LogService.Logger.Debug("Creating new chat...");
         await ChatSocketService.Instance.CreateChat();
     }
 
     public async Task DeleteChat(Guid chatId)
     {
-        _logger.LogDebug($"Deleting chat '{chatId}'...");
+        LogService.Logger.Debug($"Deleting chat '{chatId}'...");
         await ChatSocketService.Instance.DeleteChat(chatId);
     }
 
     private async void OnChatAdded(Chat chat)
     {
-        _logger.LogDebug($"Adding chat '{chat.Id}'...");
+        LogService.Logger.Debug($"Adding chat '{chat.Id}'...");
         await _localRepository.InsertChat(chat);
         Chats.Add(chat);
         
@@ -134,7 +133,7 @@ public class ChatsService
 
     private async void OnChatUpdated(Chat chat)
     {
-        _logger.LogDebug($"Updating chat '{chat.Id}'...");
+        LogService.Logger.Debug($"Updating chat '{chat.Id}'...");
         await _localRepository.SaveChat(chat);
         GetChat(chat.Id).Update(chat);
         
@@ -146,7 +145,7 @@ public class ChatsService
 
     private async void OnChatDeleted(Guid chatId)
     {
-        _logger.LogDebug($"Deleting chat '{chatId}'...");
+        LogService.Logger.Debug($"Deleting chat '{chatId}'...");
         try
         {
             Chats.Remove(GetChat(chatId));
@@ -154,13 +153,13 @@ public class ChatsService
         }
         catch (KeyNotFoundException e)
         {
-            _logger.LogWarning($"Chat '{chatId} not found");
+            LogService.Logger.Warning($"Chat '{chatId} not found");
         }
     }
 
     public async void SaveChat(Chat chat)
     {
-        _logger.LogDebug($"Saving chat '{chat.Id}'...");
+        LogService.Logger.Debug($"Saving chat '{chat.Id}'...");
         await ChatSocketService.Instance.UpdateChat(chat.Id, new ChatUpdateModel
         {
             name = chat.Name,
@@ -187,7 +186,7 @@ public class ChatsService
     
     public async Task CreateMessage(Chat chat, string role, string content, List<Message>? reply = null, bool prompt = false)
     {
-        _logger.LogDebug($"Creating new message with {reply?.Count} reply ...");
+        LogService.Logger.Debug($"Creating new message with {reply?.Count} reply ...");
 
         var replys = new List<ReplyCreateModel>();
         foreach (var message in reply ?? new())
@@ -212,13 +211,13 @@ public class ChatsService
 
     public async Task DeleteMessage(Guid messageId)
     {
-        _logger.LogDebug($"Deleting message '{messageId}'...");
+        LogService.Logger.Debug($"Deleting message '{messageId}'...");
         await ChatSocketService.Instance.DeleteMessage(messageId);
     }
 
     private async void OnMessageAdded(Message message)
     {
-        _logger.LogDebug($"Adding message '{message.Id}'...");
+        LogService.Logger.Debug($"Adding message '{message.Id}'...");
         await _localRepository.InsertMessage(message);
         try
         {
@@ -233,13 +232,13 @@ public class ChatsService
         }
         catch (KeyNotFoundException)
         {
-            _logger.LogWarning($"Chat '${message.ChatId}' not found");
+            LogService.Logger.Warning($"Chat '${message.ChatId}' not found");
         }
     }
 
     private async void OnMessageContentAdded(Guid chatId, Guid messageId, string content)
     {
-        _logger.LogDebug($"Adding content to '{messageId}'...");
+        LogService.Logger.Debug($"Adding content to '{messageId}'...");
         try
         {
             var chat = GetChat(chatId);
@@ -249,7 +248,7 @@ public class ChatsService
         }
         catch (Exception)
         {
-            _logger.LogWarning($"Chat '${chatId}' or message '${messageId}' not found");
+            LogService.Logger.Warning($"Chat '${chatId}' or message '${messageId}' not found");
         }
     }
 
@@ -277,7 +276,7 @@ public class ChatsService
 
     public async Task LoadMessages(Guid chatId, int count)
     {
-        _logger.LogDebug($"Load messages to chat '{chatId}' from local repository...");
+        LogService.Logger.Debug($"Load messages to chat '{chatId}' from local repository...");
         var chat = GetChat(chatId);
         
         List<Message> messages;
@@ -285,12 +284,12 @@ public class ChatsService
             messages = await _localRepository.GetAllMessages(chatId);
         else
             messages = await _localRepository.GetAllMessagesBefore(chatId, chat.LastLoadedMessage.Value);
-        _logger.LogDebug($"Found {messages.Count} messages");
+        LogService.Logger.Debug($"Found {messages.Count} messages");
         
         if (messages.Count > count)
             messages = messages.Slice(messages.Count - count, count);
         messages.Reverse();
-        _logger.LogDebug($"Adding {messages.Count} messages");
+        LogService.Logger.Debug($"Adding {messages.Count} messages");
         foreach (var message in messages)
         {
             chat.Messages.Insert(0, message);
@@ -307,7 +306,7 @@ public class ChatsService
         }
 
         chat.LastLoadedMessage = chat.Messages.Count > 0 ? chat.Messages[0].Id : null;
-        _logger.LogDebug($"Unload messages from '{chat.Name}' until = {chat.LastLoadedMessage}");
+        LogService.Logger.Debug($"Unload messages from '{chat.Name}' until = {chat.LastLoadedMessage}");
     }
 
     private void SortChats()
@@ -315,14 +314,14 @@ public class ChatsService
         if (_sorting)
             return;
         _sorting = true;
-        _logger.LogDebug("Start sorting chats...");
+        LogService.Logger.Debug("Start sorting chats...");
         var chats = Chats.ToList();
         chats.Sort();
         foreach (var chat in chats)
         {
             Chats.MoveItem(chat, 0);
         }
-        _logger.LogDebug("Chats sorted...");
+        LogService.Logger.Debug("Chats sorted...");
         _sorting = false;
     }
 }

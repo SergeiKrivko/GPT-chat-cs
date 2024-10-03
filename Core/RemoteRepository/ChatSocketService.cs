@@ -138,7 +138,7 @@ public class ChatSocketService : SocketService
         if (_updatesLoaded)
         {
             SettingsService.Instance.Set($"{AuthService.Instance.User?.Id}-timestamp", time);
-            Logger.LogDebug($"Time updated ({time})");
+            LogService.Logger.Debug($"Time updated ({time})");
         }
     }
 

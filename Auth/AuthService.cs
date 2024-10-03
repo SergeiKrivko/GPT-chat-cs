@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Json;
-using Microsoft.Extensions.Logging;
 using Utils;
 using Utils.Http;
 using Utils.Http.Exceptions;
@@ -15,7 +14,6 @@ public class AuthService : HttpService
 
     private HttpClient _client = new HttpClient();
     private User? _user;
-    private ILogger _logger = LogService.CreateLogger("Auth");
 
     private bool _refreshed = false;
     
@@ -52,7 +50,7 @@ public class AuthService : HttpService
                 _timer.Interval = int.Max(10, (int)(_user.ExpiresAt - DateTime.Now).Value.TotalMilliseconds - 10000);
                 if (_timer.Interval > 10)
                     Refreshed = true;
-                _logger.LogInformation($"Waiting for {_timer.Interval} milliseconds");
+                LogService.Logger.Information($"Waiting for {_timer.Interval} milliseconds");
                 _timer.Start();
             } else
                 _timer.Stop();
@@ -126,7 +124,7 @@ public class AuthService : HttpService
             User.IdToken = resp.id_token;
             User.RefreshToken = resp.refresh_token;
             User.ExpiresAt = DateTime.Now + TimeSpan.FromSeconds(resp.expires_in);
-            _logger.LogInformation("Token was refreshed successfully");
+            LogService.Logger.Information("Token was refreshed successfully");
             User = User;
             Refreshed = true;
         }
@@ -134,13 +132,13 @@ public class AuthService : HttpService
         {
             Refreshed = false;
             _timer.Interval = 10000;
-            _logger.LogError($"Token refresh failed: no connection. Waiting for {_timer.Interval} milliseconds");
+            LogService.Logger.Error($"Token refresh failed: no connection. Waiting for {_timer.Interval} milliseconds");
             _timer.Start();
         }
         catch (HttpServiceException)
         {
             Refreshed = false;
-            _logger.LogError("Token refresh failed: log out");
+            LogService.Logger.Error("Token refresh failed: log out");
             User = null;
         }
     }

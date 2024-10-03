@@ -7,7 +7,6 @@ namespace Utils.Sockets;
 public class SocketService
 {
     protected readonly SocketIOClient.SocketIO Client;
-    protected readonly ILogger Logger = LogService.CreateLogger("Sockets");
 
     protected SocketService(string url)
     {
@@ -27,9 +26,9 @@ public class SocketService
             await Client.DisconnectAsync();
         if (token != null)
             Client.Options.Auth = token;
-        Logger.LogInformation("Connecting...");
+        LogService.Logger.Information("Connecting...");
         await Client.ConnectAsync();
-        Logger.LogInformation("Connected");
+        LogService.Logger.Information("Connected");
     }
 
     public delegate void Handler<T>(T data);
@@ -42,13 +41,13 @@ public class SocketService
             var data = response.GetValue<SocketDataModel<T>>();
             if (data != null)
             {
-                Logger.LogDebug($"Socket '{key}' received");
+                LogService.Logger.Debug($"Socket '{key}' received");
                 TimeUpdated?.Invoke(data.time);
                 handler(data.data);
             }
             else
             {
-                Logger.LogWarning($"Socket '{key}' received with invalid data");
+                LogService.Logger.Warning($"Socket '{key}' received with invalid data");
             }
         });
     }
@@ -60,14 +59,14 @@ public class SocketService
             var data = response.GetValue<SocketDataModel<T>>();
             if (data != null)
             {
-                Logger.LogDebug($"Socket '{key}' received");
+                LogService.Logger.Debug($"Socket '{key}' received");
                 TimeUpdated?.Invoke(data.time);
                 var callback = handler(data.data);
                 await response.CallbackAsync(callback);
             }
             else
             {
-                Logger.LogWarning($"Socket '{key}' received with invalid data");
+                LogService.Logger.Warning($"Socket '{key}' received with invalid data");
             }
         });
     }
@@ -76,10 +75,10 @@ public class SocketService
     {
         if (!Client.Connected)
         {
-            Logger.LogWarning($"Not connected: failed to emit '{key}'");
+            LogService.Logger.Warning($"Not connected: failed to emit '{key}'");
             return;
         }
-        Logger.LogDebug($"Socket '{key}' emitted");
+        LogService.Logger.Debug($"Socket '{key}' emitted");
         await Client.EmitAsync(key, data);
     }
 
@@ -87,13 +86,13 @@ public class SocketService
     {
         if (!Client.Connected)
         {
-            Logger.LogWarning($"Not connected: failed to emit '{key}'");
+            LogService.Logger.Warning($"Not connected: failed to emit '{key}'");
             return;
         }
-        Logger.LogDebug($"Socket '{key}' emitted");
+        LogService.Logger.Debug($"Socket '{key}' emitted");
         await Client.EmitAsync(key, response =>
         {
-            Logger.LogDebug($"Response to socket '{key}' received");
+            LogService.Logger.Debug($"Response to socket '{key}' received");
             var resp = response.GetValue<SocketDataModel<T>>();
             TimeUpdated?.Invoke(resp.time);
             handler(resp.data);

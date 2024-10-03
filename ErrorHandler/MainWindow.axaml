@@ -1,0 +1,25 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="ErrorHandler.MainWindow"
+        Title="ErrorHandler" Width="500">
+    <Grid RowDefinitions="Auto * Auto Auto" Margin="10">
+        <TextBlock FontSize="16" Margin="5" TextWrapping="Wrap">
+            В приложении GPT-chat произошла критическая ошибка
+        </TextBlock>
+        <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Margin="5">
+            <ScrollViewer>
+                <TextBlock TextWrapping="Wrap" Name="LogBlock" FontFamily="Consolas" Padding="5" />
+            </ScrollViewer>
+        </Border>
+        <TextBlock Grid.Row="2" FontSize="16" Margin="5" TextWrapping="Wrap">
+            Отправить отчет об ошибке на сервер? Таким образом вы поможете улучшить работу приложения.
+        </TextBlock>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="5">
+            <Button Click="ButtonSend_OnClick">Отправить</Button>
+            <Button Click="ButtonNotSend_OnClick">Не отправлять</Button>
+        </StackPanel>
+    </Grid>
+</Window>
